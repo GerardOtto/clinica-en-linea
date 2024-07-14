@@ -1,25 +1,32 @@
-import logo from './logo.svg';
+import React from 'react';
+import { useEffect, useState } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Header from './components/Header';
+import MainContent from './components/MainContent';
+import Footer from './components/Footer';
+import Login from './components/Login';
+import Registro from './components/Registro';
+import Perfil from './components/perfilProfesional';
+import Perfiles from './components/profesionales'
 import './App.css';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
 
+
+  return (
+
+    <Router>
+      <Routes>
+        <Route path="/" element={<MainContent />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/registro" element={<Registro />} />
+        <Route path="/perfilPro" element={<Perfil />} />
+        <Route path="/profesionales" element={<Perfiles />} />
+{/* estas son las rutas para comunicarte entre paginas */}
+      
+      </Routes>
+    </Router>
+  );
+
+}
 export default App;
