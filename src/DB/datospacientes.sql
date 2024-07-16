@@ -35,24 +35,28 @@ CREATE TABLE `paciente` (
   `telefono` int(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Índices para tablas volcadas
---
-
+CREATE TABLE cita (
+  `id` INT PRIMARY KEY AUTO_INCREMENT,
+  `paciente_id` INT,
+  `fecha_hora` DATETIME NOT NULL,
+  `descripcion` TEXT,
+  FOREIGN KEY (paciente_id) REFERENCES paciente(id)
+);
 --
 -- Indices de la tabla `personas`
 --
 ALTER TABLE `personas`
   ADD PRIMARY KEY (`id`);
 
---
--- AUTO_INCREMENT de las tablas volcadas
---
-
---
+ALTER TABLE `cita`
+  ADD PRIMARY KEY (`id`);
 -- AUTO_INCREMENT de la tabla `personas`
 --
 ALTER TABLE `personas`
+  MODIFY `id` int(100) NOT NULL AUTO_INCREMENT;
+COMMIT;
+
+ALTER TABLE `cita`
   MODIFY `id` int(100) NOT NULL AUTO_INCREMENT;
 COMMIT;
 

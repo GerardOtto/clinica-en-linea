@@ -2,10 +2,11 @@
 
 body {
     font-family: Arial, sans-serif;
+    color: rgb(228, 241, 240);
   }
   
   .formulario-registro {
-    background-color: #c6d8f4;
+    background-color: rgb(0, 58, 57);
     padding: 20px;
     margin: 0 auto;
     width: 300px;
@@ -41,7 +42,7 @@ body {
   }
   
   .formulario-registro button[type="submit"] {
-    background-color: #3b68e1;
+    background-color: rgb(46, 121, 109);
     color: white;
     padding: 10px 20px;
     border: none;

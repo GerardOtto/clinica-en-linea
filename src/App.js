@@ -7,7 +7,8 @@ import Footer from './components/Footer';
 import Login from './components/Login';
 import Registro from './components/Registro';
 import Perfil from './components/perfilProfesional';
-import Perfiles from './components/profesionales'
+import Perfiles from './components/profesionales';
+import AgendarCita from './components/agendarCita';
 import './App.css';
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
         <Route path="/registro" element={<Registro />} />
         <Route path="/perfilPro" element={<Perfil />} />
         <Route path="/profesionales" element={<Perfiles />} />
+        <Route path="/agendarCita" element={<AgendarCita />} />
 {/* estas son las rutas para comunicarte entre paginas */}
       
       </Routes>

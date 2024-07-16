@@ -1,14 +1,18 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import './Header.css';
+import Logo1 from './Cafan-logo-2.png';
 
 const Header = () => {
   return (
     <header className="header">
       <div className="logo">
-        <Link to="/"><button className='logo-button'>LOGO</button></Link>
+        <Link to="/">
+          <button className="logo-button">
+            <img src={Logo1} alt="Cafan Logo" style={{width:"350px",height:"110px"}}/>
+          </button>
+        </Link>
       </div>
-      <h1 className="main-title">Clínica en línea</h1>
       <div className="nav-right">
         <ul className="nav-buttons">
           <li><Link to="/registro"><button>Registrarse</button></Link></li>

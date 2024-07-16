@@ -1,6 +1,6 @@
 .App {
   font-family: Arial, sans-serif;
-  background-color: rgb(6, 24, 18);
+  background-color: rgb(130, 202, 203);
 }
 
 header, main, footer {
@@ -9,5 +9,5 @@ header, main, footer {
 }
 
 body{
-  background-color:  #c3d6f1;
+  background-color:  rgb(46, 121, 109);
 }

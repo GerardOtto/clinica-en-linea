@@ -37,7 +37,7 @@
   }
   
   .footer-button{
-    background-color: #3b68e1;
+    background-color: rgb(32, 83, 75);
     color: white;
     padding: 10px 20px;
     border: none;
@@ -47,6 +47,6 @@
   }
 
   .footer-button:hover {
-    background-color: #2f50b7;
+    background-color: rgb(36, 95, 85);
   }
   

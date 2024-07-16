@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './formulario-login.css';
+import './formulario-registro.css';
 import { Link } from 'react-router-dom';
 
 const Formulario = () => {
@@ -7,7 +7,8 @@ const Formulario = () => {
   const [contrasena, setContrasena] = useState('');
   const [errors, setErrors] = useState({});
 
-  const handleIngresar = async () => {
+  const handleIngresar = async (event) => {
+    event.preventDefault(); // Evita la recarga de la página
     const errors = {};
 
     if (email.trim() === '') {
@@ -41,12 +42,10 @@ const Formulario = () => {
         const data = await response.json();
 
         if (data.success) {
-            alert('Inicio de sesión exitoso!');
-          }
-          else 
-          {
-            alert('Los datos de inicio de sesión no coinciden');
-          }
+          alert('Inicio de sesión exitoso!');
+        } else {
+          alert('Los datos de inicio de sesión no coinciden');
+        }
       } catch (error) {
         console.error(error);
         alert('Ocurrió un error al comunicarse con el servidor');
@@ -66,13 +65,13 @@ const Formulario = () => {
   const handleKeyPress = (event) => {
     if (event.key === 'Enter') {
       event.preventDefault();
-      handleIngresar();
+      handleIngresar(event);
     }
   };
 
   return (
     <div className="formulario-registro">
-      <form id="registro" name="registro">
+      <form id="registro" name="registro" onSubmit={handleIngresar}>
         <div className="mb-3">
           <label htmlFor="email" className="form-label">
             Email
@@ -108,16 +107,15 @@ const Formulario = () => {
           )}
         </div>
         <button
-          type="button"
+          type="submit"
           id="ingresar"
           name="ingresar"
-          onClick={handleIngresar}
-          style={{marginRight:"5px"}}
+          style={{ marginRight: '5px' }}
         >
           Ingresar
         </button>
         <Link to={'/recuperarClave'}>
-          <button type="button" id="botonRecuperar" name="botonRecuperar">
+          <button type="submit" id="botonRecuperar" name="botonRecuperar">
             Recuperar clave
           </button>
         </Link>

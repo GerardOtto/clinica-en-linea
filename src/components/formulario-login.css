@@ -30,7 +30,7 @@ body {
     border: 1px solid #ccc;
   }
   
-  .login button[type="button"] {
+  .login button[type="submit"] {
     background-color: #3b68e1;
     color: white;
     padding: 10px 20px;
@@ -40,7 +40,7 @@ body {
     margin: 5px;
   }
   
-  .login button[type="button"]:hover {
+  .login button[type="submit"]:hover {
     background-color: #2f50b7;
   }
   
