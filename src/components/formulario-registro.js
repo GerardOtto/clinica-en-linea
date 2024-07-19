@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import './formulario-registro.css'
+import './formulario-registro.css';
 
 class FormularioRegistro extends Component {
   state = {
@@ -42,7 +42,7 @@ class FormularioRegistro extends Component {
       this.setState({ errors });
     } else {
       try {
-        const response = await fetch('http://localhost:4000/crear', {
+        const response = await fetch('http://localhost:4000/crearUsuario', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -55,25 +55,34 @@ class FormularioRegistro extends Component {
           }),
         });
 
-        const data = await response.json();
+        const text = await response.text();
+        let data;
 
-        if (response.ok) {
-          alert('Registro exitoso! (Datos añadidos a la BASE DE DATOS)');
-          // Restablecer el formulario
-          this.setState({
-            nombre: '',
-            email: '',
-            contrasena: '',
-            recontrasena: '',
-            telefono: '',
-            errors: {},
-          });
-        } else {
-          alert(data.message);
+        try {
+          data = JSON.parse(text);
+        } catch (error) {
+          throw new Error('Respuesta no es un JSON válido: ' + text);
         }
+
+        if (!response.ok) {
+          throw new Error(data.message || 'Error al crear usuario');
+        }
+
+        console.log('Registro exitoso:', data);
+
+        alert('Registro exitoso! (Datos añadidos a la BASE DE DATOS)');
+        // Restablecer el formulario
+        this.setState({
+          nombre: '',
+          email: '',
+          contrasena: '',
+          recontrasena: '',
+          telefono: '',
+          errors: {},
+        });
       } catch (error) {
         console.error('Error al realizar la solicitud:', error);
-        alert('Error al intentar registrarse');
+        alert('Error al intentar registrarse: ' + error.message);
       }
     }
   };

@@ -1,5 +1,4 @@
-import React from 'react';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
 import MainContent from './components/MainContent';
@@ -9,26 +8,47 @@ import Registro from './components/Registro';
 import Perfil from './components/perfilProfesional';
 import Perfiles from './components/profesionales';
 import AgendarCita from './components/agendarCita';
+import AnadirEspecialista from './components/anadirEspecialista';
+import AdministrarEspecialistas from './components/administrarEspecialistas';
+import MisCitas from './components/misCitas';
 import './App.css';
 
 function App() {
+  const [inSesion, setSesion] = useState(false);
+  const [isAdmin, setAdmin] = useState(false);
 
+  useEffect(() => {
+    const sesion = localStorage.getItem('token-sesion');
+    if (sesion) {
+      setSesion(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      setAdmin(true);
+    }
+  }, []);
 
   return (
-
     <Router>
+      <Header inSesion={inSesion} isAdmin={isAdmin} />
       <Routes>
         <Route path="/" element={<MainContent />} />
         <Route path="/login" element={<Login />} />
         <Route path="/registro" element={<Registro />} />
-        <Route path="/perfilPro" element={<Perfil />} />
+        <Route path="/perfilPro/:id" element={<Perfil />} />
         <Route path="/profesionales" element={<Perfiles />} />
         <Route path="/agendarCita" element={<AgendarCita />} />
-{/* estas son las rutas para comunicarte entre paginas */}
-      
+        <Route path="/anadirEspecialista" element={<AnadirEspecialista />} />
+        <Route path="/administrarEspecialistas" element={<AdministrarEspecialistas />} />
+        <Route path="/misCitas" element={<MisCitas />} />
+        {/* estas son las rutas para comunicarte entre paginas */}
       </Routes>
+      <Footer />
     </Router>
   );
-
 }
+
 export default App;

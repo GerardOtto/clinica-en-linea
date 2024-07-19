@@ -1,47 +1,76 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './perfilProfesional.css';
-import { Link } from 'react-router-dom';
-import Cabecera from './Header';
-import iconoWhatsapp from './whatsapp-icono.svg';
+import { useParams, useNavigate } from 'react-router-dom';
 
 const Profile = () => {
+  const { id } = useParams();
+  const [especialista, setEspecialista] = useState(null);
+  const navigate = useNavigate(); // Hook para redirigir
+
+  useEffect(() => {
+    const fetchEspecialista = async () => {
+      try {
+        const response = await fetch(`http://localhost:4000/especialista/${id}`);
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        setEspecialista(data);
+      } catch (error) {
+        console.error('Error al recuperar especialista:', error);
+      }
+    };
+
+    fetchEspecialista();
+  }, [id]);
+
+  if (!especialista) {
+    return <div>Cargando...</div>;
+  }
+
+  const handleAgendarClick = () => {
+    navigate(`/agendarCita?especialistaId=${id}`);
+  };
+
   return (
     <>
-    {<Cabecera />}
-    <div className="profile-container">
-      <main className="profile-content">
-        <div className="image-section"
-        style={{ width: "30%",
-            border: "1px solid #ccc",
-            padding: "20px",
-            textAlign: 'center'}}>
-          <p>Imagen del profesional</p>
-        </div>
-        <div className="info-section">
-          <h2>Nombre</h2>
-          <p>Descripción de la persona, contacto, especialidad y horario de atención</p>
-          <p>
-            Nullam at justo felis. Phasellus posuere eu metus ut congue. Praesent
-            posuere, magna nec molestie imperdiet, ante mi mattis tortor, nec
-            aliquet mi magna at dui. Ut porta suscipit purus at elementum.
-            Aliquam hendrerit ex vel metus semper pretium. Fusce facilisis leo
-            et sapien volutpat pulvinar. Vivamus interdum rhoncus odio. In
-            rutrum felis eget ligula imperdiet, at luctus nibh accumsan. Donec
-            vel tempus quam, vel porta turpis. Etiam nec enim placerat, suscipit
-            mauris ut, sodales nisl.
-          </p>
-        </div>
-      </main>
-      <footer className="profile-footer">
-        <button className="footer-button">Agendar</button>
-        <Link to="https://mail.google.com/mail/u/lee@example.org/?view=cm&to=correoProfesional@example.com&su=Consulta Cafan&body=Por favor ingrese su consulta y sus datos para que el especialista se ponga en contacto con usted.&bcc=correoAdmin@example.com">
-          <button className="footer-button">Enviar correo (Gmail)</button>
-        </Link>
-        <Link to="https://wa.me/56975348882?text=Hola! Me gustaría solicitar información sobre su disponibilidad para una consulta">
-          <button className="footer-button">Consulta directa (Whatsapp)</button>
-        </Link>
-      </footer>
-    </div>
+      <div className="profile-container">
+        <main className="profile-content">
+          <div className="image-section"
+            style={{ 
+              width: "30%",
+              border: "1px solid #ccc",
+              padding: "20px",
+              textAlign: 'center'
+            }}>
+            {especialista.imagen ? (
+              <img
+                src={`http://localhost:4000/${especialista.imagen}`}
+                alt="Imagen del profesional"
+                className="profile-image"
+              />
+            ) : (
+              'Imagen del profesional'
+            )}
+          </div>
+          <div className="info-section">
+            <h2>{especialista.nombre}</h2>
+            <p>Contacto: {especialista.contacto}</p>
+            <p>Especialidad: {especialista.especialidad}</p>
+            <p>Horario de Atención: {especialista.horarioAtencion}</p>
+            <p>{especialista.descripcion}</p>
+          </div>
+        </main>
+        <footer className="profile-footer">
+          <button className="footer-button" onClick={handleAgendarClick}>Agendar</button>
+          <a href={`mailto:${especialista.correo}?subject=Consulta Cafan&body=Por favor ingrese su consulta y sus datos para que el especialista se ponga en contacto con usted.`}>
+            <button className="footer-button">Enviar correo (Gmail)</button>
+          </a>
+          <a href={`https://wa.me/${especialista.contacto}?text=Hola! Me gustaría solicitar información sobre su disponibilidad para una consulta`}>
+            <button className="footer-button">Consulta directa (Whatsapp)</button>
+          </a>
+        </footer>
+      </div>
     </>
   );
 };

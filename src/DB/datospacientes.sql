@@ -24,7 +24,7 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `personas`
+-- Estructura de tabla para la tabla `paciente`
 --
 
 CREATE TABLE `paciente` (
@@ -35,29 +35,56 @@ CREATE TABLE `paciente` (
   `telefono` int(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+
+
+--
+-- Estructura de tabla para la tabla `especialista`
+--
+
+CREATE TABLE `especialista` (
+  `id` INT PRIMARY KEY AUTO_INCREMENT,
+  `nombre` VARCHAR(255) NOT NULL,
+  `contacto` VARCHAR(255),
+  `horario_atencion` VARCHAR(255),
+  'correo' VARCHAR(100),
+  'especialidad' VARCHAR(200)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Estructura de tabla para la tabla `cita`
+--
 CREATE TABLE cita (
   `id` INT PRIMARY KEY AUTO_INCREMENT,
-  `paciente_id` INT,
-  `fecha_hora` DATETIME NOT NULL,
+  `nombrePaciente` VARCHAR(200),
+  `fecha` DATE NOT NULL,
   `descripcion` TEXT,
-  FOREIGN KEY (paciente_id) REFERENCES paciente(id)
+  'especialista_id' int
+  FOREIGN KEY (nombrePaciente) REFERENCES paciente(nombre),
+  FOREIGN KEY (especialista_id) REFERENCES especialista(id)
 );
 --
--- Indices de la tabla `personas`
 --
-ALTER TABLE `personas`
+-- Indices de la tabla `paciente`
+--
+ALTER TABLE `paciente`
   ADD PRIMARY KEY (`id`);
 
+--
+-- Indices de la tabla `cita`
+--
 ALTER TABLE `cita`
   ADD PRIMARY KEY (`id`);
--- AUTO_INCREMENT de la tabla `personas`
---
-ALTER TABLE `personas`
-  MODIFY `id` int(100) NOT NULL AUTO_INCREMENT;
-COMMIT;
 
+-- AUTO_INCREMENT de la tabla `paciente`
+--
+ALTER TABLE `paciente`
+  MODIFY `id` int(100) NOT NULL AUTO_INCREMENT;
+
+-- AUTO_INCREMENT de la tabla `cita`
+--
 ALTER TABLE `cita`
   MODIFY `id` int(100) NOT NULL AUTO_INCREMENT;
+
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

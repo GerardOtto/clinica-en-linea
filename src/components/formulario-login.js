@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import './formulario-registro.css';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Formulario = () => {
   const [email, setEmail] = useState('');
   const [contrasena, setContrasena] = useState('');
   const [errors, setErrors] = useState({});
+  const navigate = useNavigate();
 
   const handleIngresar = async (event) => {
     event.preventDefault(); // Evita la recarga de la página
@@ -42,10 +43,18 @@ const Formulario = () => {
         const data = await response.json();
 
         if (data.success) {
+          if (email === 'gerard@gmail.com' && contrasena === '$20969557Kk') {
+            const token = 'your-token'; // Este es el token que deseas almacenar
+            localStorage.setItem('token', token);
+            alert('Inicio de sesión exitoso como ADMIN!');
+          }
           alert('Inicio de sesión exitoso!');
+          const sesion = data.nombre; // Asume que el nombre del usuario viene en la respuesta
+          localStorage.setItem('token-sesion', sesion);
+          window.location.reload(); // REFRESCAR AQUI
         } else {
           alert('Los datos de inicio de sesión no coinciden');
-        }
+        }        
       } catch (error) {
         console.error(error);
         alert('Ocurrió un error al comunicarse con el servidor');

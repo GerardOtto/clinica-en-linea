@@ -1,13 +1,29 @@
-.App {
-  font-family: Arial, sans-serif;
-  background-color: rgb(130, 202, 203);
+/* Establece márgenes y padding a 0 en el HTML y el cuerpo para evitar espacios no deseados */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
 }
 
-header, main, footer {
-  max-width: 1100px;
-  margin: 0 auto;
+/* Asegúrate de que el contenedor del footer esté correctamente posicionado */
+.footer {
+  padding: 10px 20px;
+  margin-top: 50px;
+  background-color: #51917b;
+  text-align: center;
+  width: 100%; /* Asegura que el footer ocupe el 100% del ancho de la ventana */
+  box-sizing: border-box; /* Incluye el padding en el ancho total */
+  position: relative; /* Por si necesitas posicionarlo más adelante */
 }
 
-body{
+/* Opción adicional para asegurar que el footer se adhiere al fondo */
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
   background-color:  rgb(46, 121, 109);
+}
+
+.content {
+  flex: 1; /* Esta clase sería para el contenido principal de la página */
 }

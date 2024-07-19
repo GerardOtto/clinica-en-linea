@@ -1,11 +1,9 @@
 import React from 'react';
 import './MainContent.css';
-import Header from './Header';
 
 const MainContent = () => {
   return (
     <>
-      <Header />
       <main className="main-content">
         <div className="left-sidebar">
           <p>Texto de ejemplo</p>
