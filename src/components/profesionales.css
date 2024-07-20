@@ -1,0 +1,56 @@
+.professionals-container {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+
+.professionals-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.professional-card {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 20px;
+  width: 300px;
+  text-align: center;
+}
+
+.image-container {
+  height: 150px;
+  width: 150px;
+  margin: 0 auto 10px;
+  background-color: #f0f0f0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  border-radius: 50%; /* Para hacer la imagen redonda */
+}
+
+.profile-image {
+  height: 100%;
+  width: auto;
+}
+
+.professional-info {
+  margin-top: 10px;
+  color: rgb(69, 130, 131);
+}
+
+.schedule-button {
+  background-color: rgb(69, 130, 131);
+  color: #fff;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.schedule-button:hover {
+  background-color: rgb(74, 196, 175);
+}
