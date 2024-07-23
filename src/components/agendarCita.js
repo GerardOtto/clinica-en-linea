@@ -1,28 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import './agendarCita.css';
 
 const AgendarCita = () => {
   const [fecha, setFecha] = useState('');
+  const [hora, setHora] = useState('');
   const [informacionAdicional, setInformacionAdicional] = useState('');
   const [especialista, setEspecialista] = useState('');
   const [especialistas, setEspecialistas] = useState([]);
   const [errors, setErrors] = useState({});
-  const [mensaje, setMensaje] = useState(''); // Estado para el mensaje
-  const location = useLocation(); // Hook para obtener la ubicación actual
+  const [imagen, setImagen] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    fetchEspecialistas();
-  }, []);
-
-  useEffect(() => {
-    // Leer parámetros de la URL
-    const params = new URLSearchParams(location.search);
-    const especialistaId = params.get('especialistaId');
-    if (especialistaId) {
-      setEspecialista(especialistaId);
+    const token = localStorage.getItem('token-sesion');
+    if (!token) {
+      navigate('/login'); // Redirigir al usuario a la página de login si no hay token de sesión
+    } else {
+      fetchEspecialistas();
     }
-  }, [location.search]);
+  }, [navigate]);
 
   const fetchEspecialistas = async () => {
     try {
@@ -40,20 +37,16 @@ const AgendarCita = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = {};
-
     const token = localStorage.getItem('token-sesion');
-    console.log('Token de sesión:', token);
-  
-    if (!token) {
-      setMensaje('Debe iniciar sesión primero');
-      return; // Salir de la función si el token es nulo
-    }
 
     if (!especialista) {
       newErrors.especialista = 'Por favor, seleccione un especialista';
     }
     if (!fecha) {
       newErrors.fecha = 'Por favor, seleccione una fecha';
+    }
+    if (!hora) {
+      newErrors.hora = 'Por favor, seleccione una hora';
     }
     if (!informacionAdicional) {
       newErrors.informacionAdicional = 'Por favor, ingrese información adicional';
@@ -63,18 +56,23 @@ const AgendarCita = () => {
       setErrors(newErrors);
     } else {
       try {
+        const formData = new FormData();
+        formData.append('rutPaciente', token);
+        formData.append('fecha', fecha);
+        formData.append('hora', hora);
+        formData.append('descripcion', informacionAdicional);
+        formData.append('especialista_id', especialista);
+        if (imagen) {
+          formData.append('imagen', imagen);
+        }
+        formData.append('estado', 'Pendiente');
+
         const response = await fetch('http://localhost:4000/agendarCita', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
           },
-          body: JSON.stringify({
-            nombrePaciente: token, // Si el token no contiene el nombre del paciente, cámbialo por la información correcta
-            fecha,
-            descripcion: informacionAdicional,
-            especialista_id: especialista
-          })
+          body: formData
         });
 
         if (!response.ok) {
@@ -85,7 +83,7 @@ const AgendarCita = () => {
         console.log('Cita agendada correctamente:', result);
         setErrors({});
         alert('Solicitud realizada con éxito!');
-        window.location.reload(); // REFRESCAR AQUI
+        window.location.reload();
       } catch (error) {
         console.error('Error al enviar la cita:', error);
       }
@@ -95,8 +93,7 @@ const AgendarCita = () => {
   return (
     <div className="agendar-cita">
       <h2>Agendar Cita</h2>
-      {mensaje && <p className="mensaje-error">{mensaje}</p>} {/* Mostrar el mensaje si existe */}
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} encType="multipart/form-data">
         <div className="form-group">
           <label htmlFor="especialista">Seleccione especialista:</label>
           <select
@@ -124,6 +121,27 @@ const AgendarCita = () => {
           {errors.fecha && <span className="error-message">{errors.fecha}</span>}
         </div>
         <div className="form-group">
+          <label htmlFor="hora">Seleccione una hora:</label>
+          <select
+            id="hora"
+            value={hora}
+            onChange={(e) => setHora(e.target.value)}
+          >
+            <option value="">Seleccione...</option>
+            <option value="08:00-09:00">08:00 - 09:00</option>
+            <option value="09:00-10:00">09:00 - 10:00</option>
+            <option value="10:00-11:00">10:00 - 11:00</option>
+            <option value="11:00-12:00">11:00 - 12:00</option>
+            <option value="12:00-13:00">12:00 - 13:00</option>
+            <option value="13:00-14:00">13:00 - 14:00</option>
+            <option value="14:00-15:00">14:00 - 15:00</option>
+            <option value="15:00-16:00">15:00 - 16:00</option>
+            <option value="16:00-17:00">16:00 - 17:00</option>
+            <option value="17:00-18:00">17:00 - 18:00</option>
+          </select>
+          {errors.hora && <span className="error-message">{errors.hora}</span>}
+        </div>
+        <div className="form-group">
           <label htmlFor="informacionAdicional">Información adicional:</label>
           <textarea
             id="informacionAdicional"
@@ -131,6 +149,15 @@ const AgendarCita = () => {
             onChange={(e) => setInformacionAdicional(e.target.value)}
           />
           {errors.informacionAdicional && <span className="error-message">{errors.informacionAdicional}</span>}
+        </div>
+        <div className="form-group">
+          <label htmlFor="imagen">Adjuntar Imagen:</label>
+          <input
+            type="file"
+            id="imagen"
+            accept="image/*"
+            onChange={(e) => setImagen(e.target.files[0])}
+          />
         </div>
         <button type="submit">Solicitar cita</button>
       </form>

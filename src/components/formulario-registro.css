@@ -1,51 +1,60 @@
-/* formulario-registro.css */
+.formulario-registro {
+  background-color: rgb(16, 58, 57);
+  padding: 20px;
+  margin: 0 auto;
+  width: 300px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  margin-top: 50px;
+}
 
-body {
-    font-family: Arial, sans-serif;
-    color: rgb(228, 241, 240);
-  }
-  
-  .formulario-registro {
-    background-color: rgb(0, 58, 57);
-    padding: 20px;
-    margin: 0 auto;
-    width: 300px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    margin-top: 50px;
-    padding-right: 40px;
-  }
-  
-  .formulario-registro label {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 5px;
-  }
-  
-  .formulario-registro input[type="text"],
-  .formulario-registro input[type="email"],
-  .formulario-registro input[type="password"] {
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 10px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-  }
-  
-  .formulario-registro .error-message {
-    color: red;
-    font-size: 0.9em;
-    margin-top: -10px;
-    margin-bottom: 10px;
-    display: block;
-  }
-  
-  .formulario-registro button[type="submit"] {
-    background-color: rgb(46, 121, 109);
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
+.formulario-registro label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.formulario-registro input{
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+.formulario-registro .error-message {
+  color: red;
+  font-size: 0.9em;
+  margin-top: -10px;
+  margin-bottom: 10px;
+  display: block;
+}
+
+.formulario-registro button[type="submit"] {
+  background-color: rgb(46, 121, 109);
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.formulario-registro button[type="button"] {
+  background-color: rgb(46, 121, 109);
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 10px;
+  text-decoration: none;
+}
+
+h2 {
+  margin-bottom: 20px;
+}

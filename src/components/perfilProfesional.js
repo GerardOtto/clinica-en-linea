@@ -35,7 +35,7 @@ const Profile = () => {
   return (
     <>
       <div className="profile-container">
-        <main className="profile-content">
+        <main className="profile-content" style={{marginTop:"40px"}}>
           <div className="image-section"
             style={{ 
               width: "30%",

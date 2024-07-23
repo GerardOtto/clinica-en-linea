@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { redirect } from 'react-router-dom';
 import './misCitas.css';
 
 const MisCitas = () => {
@@ -32,7 +33,7 @@ const MisCitas = () => {
     if (!token) {
       console.error('Debe iniciar sesión primero');
       alert('Debe iniciar sesión primero');
-      return;
+      return redirect ("/login");
     }
 
     try {
@@ -49,7 +50,7 @@ const MisCitas = () => {
 
       const data = await response.json();
       // Filtramos las citas según el nombre del paciente en el token
-      const citasFiltradas = data.filter(cita => cita.nombrePaciente === token);
+      const citasFiltradas = data.filter(cita => cita.rutPaciente === token);
       setCitas(citasFiltradas);
 
       // Fetch details for each specialist
@@ -79,9 +80,14 @@ const MisCitas = () => {
         <ul>
           {citas.map(cita => (
             <li key={cita.id}>
-              <span className="cita-fecha">{formatDate(cita.fecha)}</span>
+              <span className="cita-fecha">{formatDate(cita.fecha)} entre las {cita.hora} horas</span>
               <span className="cita-descripcion">{cita.descripcion}</span>
               <span className="cita-especialista">Especialista: {especialistas[cita.especialista_id] || 'Cargando...'}</span>
+              <span style={{paddingTop:"10px", paddingBottom:"10px"}}>Imagen adjunta: </span>
+              <span className='cita-imagen'>{cita.imagen && (
+                  <img src={`http://localhost:4000/${cita.imagen}`} alt="Imagen adjunta a la cita" width="300" />
+                )}</span>
+              <span className='cita-estado'>{cita.estado}</span>
             </li>
           ))}
         </ul>

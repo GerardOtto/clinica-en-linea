@@ -30,6 +30,7 @@ SET time_zone = "+00:00";
 CREATE TABLE `paciente` (
   `id` int(100) NOT NULL,
   `nombre` varchar(100) NOT NULL,
+  'rut' varchar(10) NOT NULL,
   `email` varchar(100) NOT NULL,
   `contrasena` varchar(200) NOT NULL,
   `telefono` int(100) NOT NULL

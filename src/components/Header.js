@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './Header.css';
-import Logo1 from './Cafan-logo-2.png';
+import Logo1 from './Cafan-logo-1.png';
 
 const Header = ({ inSesion, isAdmin }) => {
   const navigate = useNavigate();
@@ -52,6 +52,11 @@ const Header = ({ inSesion, isAdmin }) => {
           <li>
             {isAdmin ? (
               <Link to='/administrarEspecialistas'><button>Administrar especialistas</button></Link>
+            ) : (<></>)}
+          </li>
+          <li>
+            {isAdmin ? (
+              <Link to='/administrarCitas'><button>Administrar citas</button></Link>
             ) : (<></>)}
           </li>
         </ul>

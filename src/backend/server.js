@@ -98,7 +98,7 @@ app.post('/crearUsuario', (req, res) => {
   console.log('Valor de req.body:', req.body);
   const connection = mysql.createConnection(credentials);
   
-  const { id, nombre, email, contrasena, telefono } = req.body;
+  const { id, nombre, rutPaciente, email, contrasena, telefono } = req.body;
 
   const saltRounds = 15;
 
@@ -108,8 +108,8 @@ app.post('/crearUsuario', (req, res) => {
       res.status(500).send("Error al hashear la contraseña");
     } else {
       connection.query(
-        'INSERT INTO paciente (id, nombre, email, contrasena, telefono) VALUES (?, ?, ?, ?, ?)',
-        [id, nombre, email, hash, telefono],
+        'INSERT INTO paciente (id, nombre, rutPaciente, email, contrasena, telefono) VALUES (?, ?, ?, ?, ?, ?)',
+        [id, nombre, rutPaciente, email, hash, telefono],
         (error, results) => {
           if (error) {
             console.error(error);
@@ -237,13 +237,13 @@ app.delete('/eliminarEspecialista/:id', (req, res) => {
 });
 
 app.post('/verificar-login', bodyParser.json(), (req, res) => {
-  const { email, contrasena } = req.body;
+  const { rutPaciente, contrasena } = req.body;
   const connection = mysql.createConnection(credentials);
 
   // Realiza la consulta a la base de datos
   connection.query(
-    'SELECT * FROM paciente WHERE email = ?',
-    [email],
+    'SELECT * FROM paciente WHERE rutPaciente = ?',
+    [rutPaciente],
     (error, results) => {
       if (error) {
         console.error(error);
@@ -259,8 +259,8 @@ app.post('/verificar-login', bodyParser.json(), (req, res) => {
             } else {
               if (isMatch) {
                 // Las contraseñas coinciden, devolver el nombre del paciente
-                const nombre = results[0].nombre; // Asumiendo que el nombre está en la columna 'nombre'
-                res.status(200).json({ success: true, nombre });
+                const rutPaciente = results[0].rutPaciente; // Asumiendo que el nombre está en la columna 'nombre'
+                res.status(200).json({ success: true, rutPaciente });
               } else {
                 // Las contraseñas no coinciden
                 res.status(200).json({ success: false });
@@ -279,14 +279,15 @@ app.post('/verificar-login', bodyParser.json(), (req, res) => {
   connection.end();
 });
 
-app.post('/agendarCita', (req, res) => {
+app.post('/agendarCita', upload.single('imagen'), (req, res) => {
   console.log('Valor de req.body:', req.body);
   const connection = mysql.createConnection(credentials);
-  const { nombrePaciente, fecha, descripcion, especialista_id } = req.body;
+  const { rutPaciente, fecha, hora, descripcion, especialista_id, estado } = req.body;
+  const imagen = req.file ? path.join('uploads', req.file.filename) : null;  // Guardar la ruta de la imagen si se ha subido
 
   connection.query(
-    'INSERT INTO cita (nombrePaciente, fecha, descripcion, especialista_id) VALUES (?, ?, ?, ?)',
-    [nombrePaciente, fecha, descripcion, especialista_id],
+    'INSERT INTO cita (rutPaciente, fecha, hora, descripcion, especialista_id, imagen, estado) VALUES (?, ?, ?, ?, ?, ?, ?)',
+    [rutPaciente, fecha, hora, descripcion, especialista_id, imagen, estado],
     (error, results) => {
       if (error) {
         console.error(error);
@@ -302,6 +303,7 @@ app.post('/agendarCita', (req, res) => {
   );
   connection.end();
 });
+
 
 app.get('/misCitas', (req, res) => {
   const connection = mysql.createConnection(credentials);
@@ -321,7 +323,78 @@ app.get('/misCitas', (req, res) => {
   connection.end();
 });
 
+app.put('/citas/:id', (req, res) => {
+  const { id } = req.params;
+  const { rutPaciente, fecha, hora, descripcion, especialista_id, estado } = req.body;
+  const connection = mysql.createConnection(credentials);
 
+  connection.query(
+    'UPDATE cita SET rutPaciente = ?, fecha = ?, hora = ?, descripcion = ?, especialista_id = ?, estado = ? WHERE id = ?',
+    [rutPaciente, fecha, hora, descripcion, especialista_id, estado, id],
+    (error, results) => {
+      if (error) {
+        console.error('Error al actualizar la cita:', error);
+        res.status(500).send('Error al actualizar la cita');
+      } else {
+        if (results.affectedRows === 0) {
+          res.status(404).send('Cita no encontrada');
+        } else {
+          res.status(200).json({
+            status: 'success',
+            message: 'Cita actualizada correctamente',
+            data: results,
+          });
+        }
+      }
+    }
+  );
+  connection.end();
+});
+
+app.delete('/eliminarCita/:id', (req, res) => {
+  const connection = mysql.createConnection(credentials);
+  const { id } = req.params;
+  
+  // Primero obtener la imagen asociada con la cita (si existe)
+  connection.query(
+    'SELECT imagen FROM cita WHERE id = ?',
+    [id],
+    (error, results) => {
+      if (error) {
+        console.error('Error al obtener la imagen de la cita:', error);
+        res.status(500).send('Error al obtener la imagen de la cita');
+        connection.end();
+        return;
+      }
+
+      const imagePath = results[0]?.imagen;
+      
+      // Luego eliminar la cita
+      connection.query(
+        'DELETE FROM cita WHERE id = ?',
+        [id],
+        (error, results) => {
+          if (error) {
+            console.error('Error al eliminar la cita:', error);
+            res.status(500).send('Error al eliminar la cita');
+          } else {
+            if (imagePath) {
+              // Eliminar la imagen del servidor
+              fs.unlink(path.join(__dirname, imagePath), (err) => {
+                if (err) console.error('Error al eliminar la imagen de la cita:', err);
+              });
+            }
+            res.status(200).json({
+              status: 'success',
+              message: 'Cita eliminada correctamente',
+            });
+          }
+          connection.end();
+        }
+      );
+    }
+  );
+});
 
 
 app.listen(4000, () => console.log('Hola, soy el servidor'));

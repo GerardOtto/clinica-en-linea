@@ -3,7 +3,7 @@ import './formulario-registro.css';
 import { Link, useNavigate } from 'react-router-dom';
 
 const Formulario = () => {
-  const [email, setEmail] = useState('');
+  const [rutPaciente, setrutPaciente] = useState('');
   const [contrasena, setContrasena] = useState('');
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
@@ -12,8 +12,8 @@ const Formulario = () => {
     event.preventDefault(); // Evita la recarga de la página
     const errors = {};
 
-    if (email.trim() === '') {
-      errors.emailError = 'Por favor, ingresa tu email';
+    if (rutPaciente.trim() === '') {
+      errors.rutPacienteError = 'Por favor, ingresa tu RUT';
     }
 
     if (contrasena.trim() === '') {
@@ -37,20 +37,21 @@ const Formulario = () => {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ email, contrasena }),
+          body: JSON.stringify({ rutPaciente, contrasena }),
         });
 
         const data = await response.json();
 
         if (data.success) {
-          if (email === 'gerard@gmail.com' && contrasena === '$20969557Kk') {
+          if (rutPaciente === '20969557k' && contrasena === '$20969557Kk') {
             const token = 'your-token'; // Este es el token que deseas almacenar
             localStorage.setItem('token', token);
             alert('Inicio de sesión exitoso como ADMIN!');
           }
           alert('Inicio de sesión exitoso!');
-          const sesion = data.nombre; // Asume que el nombre del usuario viene en la respuesta
+          const sesion = data.rutPaciente; // Asume que el rut del usuario viene en la respuesta
           localStorage.setItem('token-sesion', sesion);
+          console.log('Token de sesión:', sesion);
           window.location.reload(); // REFRESCAR AQUI
         } else {
           alert('Los datos de inicio de sesión no coinciden');
@@ -64,8 +65,8 @@ const Formulario = () => {
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    if (name === 'email') {
-      setEmail(value);
+    if (name === 'rutPaciente') {
+      setrutPaciente(value);
     } else if (name === 'contrasena') {
       setContrasena(value);
     }
@@ -80,22 +81,23 @@ const Formulario = () => {
 
   return (
     <div className="formulario-registro">
+      <h2>Ingrese sus datos para iniciar sesión.</h2>
       <form id="registro" name="registro" onSubmit={handleIngresar}>
         <div className="mb-3">
-          <label htmlFor="email" className="form-label">
-            Email
+          <label htmlFor="rutPaciente" className="form-label">
+            RUT
           </label>
           <input
             type="text"
             className="form-control"
-            id="email"
-            name="email"
-            value={email}
+            id="rutPaciente"
+            name="rutPaciente"
+            value={rutPaciente}
             onChange={handleInputChange}
             onKeyPress={handleKeyPress}
           />
-          {errors.emailError && (
-            <span className="error-message">{errors.emailError}</span>
+          {errors.rutPacienteError && (
+            <span className="error-message">{errors.rutPacienteError}</span>
           )}
         </div>
         <div className="mb-3">

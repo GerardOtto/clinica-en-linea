@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Header from './components/Header';
 import MainContent from './components/MainContent';
 import Footer from './components/Footer';
@@ -11,6 +11,8 @@ import AgendarCita from './components/agendarCita';
 import AnadirEspecialista from './components/anadirEspecialista';
 import AdministrarEspecialistas from './components/administrarEspecialistas';
 import MisCitas from './components/misCitas';
+import AdministrarCitas from './components/administrarCitas'
+
 import './App.css';
 
 function App() {
@@ -44,6 +46,7 @@ function App() {
         <Route path="/anadirEspecialista" element={<AnadirEspecialista />} />
         <Route path="/administrarEspecialistas" element={<AdministrarEspecialistas />} />
         <Route path="/misCitas" element={<MisCitas />} />
+        <Route path="/administrarCitas" element={isAdmin ? <AdministrarCitas isAdmin={isAdmin} /> : <Navigate to="/" />} />
         {/* estas son las rutas para comunicarte entre paginas */}
       </Routes>
       <Footer />

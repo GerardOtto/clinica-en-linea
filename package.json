@@ -2,7 +2,7 @@
   "name": "clinica-en-linea",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://gerardotto.github.io/clinica-en-linea/",
+  "homepage": ".",
   
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",

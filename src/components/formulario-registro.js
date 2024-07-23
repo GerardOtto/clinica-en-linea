@@ -5,6 +5,8 @@ class FormularioRegistro extends Component {
   state = {
     nombre: '',
     email: '',
+    confirmarEmail: '',
+    rutPaciente: '',
     contrasena: '',
     recontrasena: '',
     telefono: '',
@@ -14,7 +16,7 @@ class FormularioRegistro extends Component {
   handleSubmit = async (event) => {
     event.preventDefault();
 
-    const { nombre, email, contrasena, recontrasena, telefono } = this.state;
+    const { nombre, email, confirmarEmail, rutPaciente, contrasena, recontrasena, telefono } = this.state;
     const errors = {};
 
     if (nombre.trim() === '') {
@@ -23,6 +25,14 @@ class FormularioRegistro extends Component {
 
     if (!this.validateField(email, /^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
       errors.emailError = 'Por favor, ingresa un correo electrónico válido';
+    }
+
+    if (email !== confirmarEmail) {
+      errors.confirmarEmailError = 'Los correos no coinciden';
+    }
+
+    if (!this.validateField(rutPaciente, /^[0-9]{7,8}[0-9Kk]$/)) {
+      errors.rutPacienteError = 'rutPaciente no válido. Debe tener 7-8 números seguidos de 1 letra o número verificador.';
     }
 
     if (!this.validateField(contrasena, /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&+=!])(?=.*[^\w\s]).{8,}$/)) {
@@ -50,6 +60,7 @@ class FormularioRegistro extends Component {
           body: JSON.stringify({
             nombre,
             email,
+            rutPaciente,
             contrasena,
             telefono,
           }),
@@ -75,6 +86,8 @@ class FormularioRegistro extends Component {
         this.setState({
           nombre: '',
           email: '',
+          confirmarEmail: '',
+          rutPaciente: '',
           contrasena: '',
           recontrasena: '',
           telefono: '',
@@ -97,7 +110,7 @@ class FormularioRegistro extends Component {
   };
 
   render() {
-    const { nombre, email, contrasena, recontrasena, telefono, errors } = this.state;
+    const { nombre, email, confirmarEmail, rutPaciente, contrasena, recontrasena, telefono, errors } = this.state;
 
     return (
       <div className="formulario-registro">
@@ -109,9 +122,20 @@ class FormularioRegistro extends Component {
             {errors.nombreError && <span className="error-message">{errors.nombreError}</span>}
           </div>
           <div>
-            <label htmlFor="email">Correo electrónico:</label>
+            <label htmlFor="rutPaciente">RUT :</label>
+            <input type="text" id="rutPaciente" name="rutPaciente" value={rutPaciente} onChange={this.handleInputChange} placeholder="Ejemplo: 12345678k" />
+            <small>*Inserte su RUT sin puntos ni guión</small>
+            {errors.rutPacienteError && <span className="error-message">{errors.rutPacienteError}</span>}
+          </div>
+          <div>
+            <label htmlFor="email" style={{paddingTop:"10px"}}>Correo electrónico:</label>
             <input type="email" id="email" name="email" value={email} onChange={this.handleInputChange} />
             {errors.emailError && <span className="error-message">{errors.emailError}</span>}
+          </div>
+          <div>
+            <label htmlFor="confirmarEmail">Confirmar correo electrónico:</label>
+            <input type="email" id="confirmarEmail" name="confirmarEmail" value={confirmarEmail} onChange={this.handleInputChange} />
+            {errors.confirmarEmailError && <span className="error-message">{errors.confirmarEmailError}</span>}
           </div>
           <div>
             <label htmlFor="contrasena">Contraseña:</label>
@@ -125,7 +149,7 @@ class FormularioRegistro extends Component {
           </div>
           <div>
             <label htmlFor="telefono">Teléfono de contacto:</label>
-            <input type="text" id="telefono" name="telefono" value={telefono} onChange={this.handleInputChange} />
+            <input type="text" id="telefono" name="telefono" value={telefono} onChange={this.handleInputChange} placeholder="Ejemplo: 912345678" />
             {errors.telefonoError && <span className="error-message">{errors.telefonoError}</span>}
           </div>
           <button type="submit">Enviar</button>
