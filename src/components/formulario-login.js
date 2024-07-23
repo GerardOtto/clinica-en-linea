@@ -1,15 +1,14 @@
+// Formulario.js
 import React, { useState } from 'react';
 import './formulario-registro.css';
-import { Link, useNavigate } from 'react-router-dom';
 
-const Formulario = () => {
+const Formulario = ({ onClose }) => {
   const [rutPaciente, setrutPaciente] = useState('');
   const [contrasena, setContrasena] = useState('');
   const [errors, setErrors] = useState({});
-  const navigate = useNavigate();
 
   const handleIngresar = async (event) => {
-    event.preventDefault(); // Evita la recarga de la página
+    event.preventDefault();
     const errors = {};
 
     if (rutPaciente.trim() === '') {
@@ -44,38 +43,23 @@ const Formulario = () => {
 
         if (data.success) {
           if (rutPaciente === '20969557k' && contrasena === '$20969557Kk') {
-            const token = 'your-token'; // Este es el token que deseas almacenar
+            const token = 'your-token'; 
             localStorage.setItem('token', token);
             alert('Inicio de sesión exitoso como ADMIN!');
           }
           alert('Inicio de sesión exitoso!');
-          const sesion = data.rutPaciente; // Asume que el rut del usuario viene en la respuesta
+          const sesion = data.rutPaciente;
           localStorage.setItem('token-sesion', sesion);
           console.log('Token de sesión:', sesion);
-          window.location.reload(); // REFRESCAR AQUI
+          window.location.reload();
+          onClose(); // Cerrar el modal después del inicio de sesión exitoso
         } else {
           alert('Los datos de inicio de sesión no coinciden');
-        }        
+        }
       } catch (error) {
         console.error(error);
         alert('Ocurrió un error al comunicarse con el servidor');
       }
-    }
-  };
-
-  const handleInputChange = (event) => {
-    const { name, value } = event.target;
-    if (name === 'rutPaciente') {
-      setrutPaciente(value);
-    } else if (name === 'contrasena') {
-      setContrasena(value);
-    }
-  };
-
-  const handleKeyPress = (event) => {
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      handleIngresar(event);
     }
   };
 
@@ -93,8 +77,7 @@ const Formulario = () => {
             id="rutPaciente"
             name="rutPaciente"
             value={rutPaciente}
-            onChange={handleInputChange}
-            onKeyPress={handleKeyPress}
+            onChange={(e) => setrutPaciente(e.target.value)}
           />
           {errors.rutPacienteError && (
             <span className="error-message">{errors.rutPacienteError}</span>
@@ -110,26 +93,15 @@ const Formulario = () => {
             id="contrasena"
             name="contrasena"
             value={contrasena}
-            onChange={handleInputChange}
-            onKeyPress={handleKeyPress}
+            onChange={(e) => setContrasena(e.target.value)}
           />
           {errors.contrasenaError && (
             <span className="error-message">{errors.contrasenaError}</span>
           )}
         </div>
-        <button
-          type="submit"
-          id="ingresar"
-          name="ingresar"
-          style={{ marginRight: '5px' }}
-        >
+        <button type="submit" id="ingresar" name="ingresar">
           Ingresar
         </button>
-        <Link to={'/recuperarClave'}>
-          <button type="submit" id="botonRecuperar" name="botonRecuperar">
-            Recuperar clave
-          </button>
-        </Link>
       </form>
     </div>
   );

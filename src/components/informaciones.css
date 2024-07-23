@@ -1,0 +1,59 @@
+.quienes-somos {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+  .contenido {
+    margin-top: 20px;
+  }
+  
+  .informacion h2 {
+    font-size: 22px;
+    margin-bottom: 20px;
+    color: black;
+  }
+  
+  .info-contenido {
+    display: flex;
+    gap: 20px;
+    color: black;
+  }
+  
+  .texto, .imagen {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    background-color: #f9f9f9;
+  }
+  
+  .texto h3 {
+    font-size: 18px;
+  }
+  
+  .texto p {
+    margin-top: 10px;
+  }
+  
+  .imagen {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .contacto {
+    margin-top: 30px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    background-color: #f9f9f9;
+    color: black;
+  }
+  
+  .contacto h3 {
+    margin: 10px 0;
+  }
+  
+  .contacto p {
+    margin: 5px 0;
+  }
+  

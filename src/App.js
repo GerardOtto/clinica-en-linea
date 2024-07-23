@@ -12,6 +12,7 @@ import AnadirEspecialista from './components/anadirEspecialista';
 import AdministrarEspecialistas from './components/administrarEspecialistas';
 import MisCitas from './components/misCitas';
 import AdministrarCitas from './components/administrarCitas'
+import Informaciones from './components/informaciones'
 
 import './App.css';
 
@@ -47,6 +48,7 @@ function App() {
         <Route path="/administrarEspecialistas" element={<AdministrarEspecialistas />} />
         <Route path="/misCitas" element={<MisCitas />} />
         <Route path="/administrarCitas" element={isAdmin ? <AdministrarCitas isAdmin={isAdmin} /> : <Navigate to="/" />} />
+        <Route path="/informaciones" element={<Informaciones />} />
         {/* estas son las rutas para comunicarte entre paginas */}
       </Routes>
       <Footer />

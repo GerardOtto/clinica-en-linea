@@ -115,7 +115,7 @@ class FormularioRegistro extends Component {
     return (
       <div className="formulario-registro">
         <form id="registro" name="registro" noValidate onSubmit={this.handleSubmit}>
-          <h2>Registro</h2>
+          <h2>Ingrese sus datos para el registro.</h2>
           <div>
             <label htmlFor="nombre">Nombre completo:</label>
             <input type="text" id="nombre" name="nombre" value={nombre} onChange={this.handleInputChange} />

@@ -1,28 +1,48 @@
-import React from 'react';
+// Header.js
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './Header.css';
 import Logo1 from './Cafan-logo-1.png';
+import Modal from './popUpLogin';
+import Formulario from './formulario-login';
 
 const Header = ({ inSesion, isAdmin }) => {
+  const [isModalOpen, setModalOpen] = useState(false);
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    // Manejo de cierre de sesión
-    localStorage.removeItem('token-sesion'); // Eliminar el token de sesión
+    localStorage.removeItem('token-sesion');
     localStorage.removeItem('token');
-    window.location.reload(); // Recargar la página para reflejar los cambios
+    window.location.reload();
+  };
+
+  const handleOpenModal = () => {
+    setModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
   };
 
   const handleClickMisReservas = (e) => {
-    e.preventDefault(); // Evita el comportamiento predeterminado del enlace
+    e.preventDefault();
     if (inSesion) {
       navigate('/misCitas');
     } else {
       alert('Debe iniciar sesión para ver sus citas!');
-      navigate('/login');
+      handleOpenModal();
     }
   };
 
+  const handleClickAgendarCita = (e) => {
+    e.preventDefault();
+    if (inSesion) {
+      navigate('/agendarCita');
+    } else {
+      alert('Debe iniciar sesión para agendar una cita!');
+      handleOpenModal();
+    }
+  };
 
   return (
     <header className="header">
@@ -44,31 +64,28 @@ const Header = ({ inSesion, isAdmin }) => {
             {inSesion ? (
               <button onClick={handleLogout}>Cerrar sesión</button>
             ) : (
-              <Link to="/login">
-                <button>Iniciar sesión</button>
-              </Link>
+              <button onClick={handleOpenModal}>Iniciar sesión</button>
             )}
           </li>
           <li>
-            {isAdmin ? (
-              <Link to='/administrarEspecialistas'><button>Administrar especialistas</button></Link>
-            ) : (<></>)}
+            {isAdmin && <Link to='/administrarEspecialistas'><button>Administrar especialistas</button></Link>}
           </li>
           <li>
-            {isAdmin ? (
-              <Link to='/administrarCitas'><button>Administrar citas</button></Link>
-            ) : (<></>)}
+            {isAdmin && <Link to='/administrarCitas'><button>Administrar citas</button></Link>}
           </li>
         </ul>
         <input type="text" placeholder="Buscar" className="search-input" />
       </div>
       <nav className="nav-links">
         <Link to="/profesionales">Profesionales</Link>
-        <Link to="/agendarCita">Agendar cita</Link>
-        <Link to="/">Informaciones</Link>
+        <Link to="/" onClick={handleClickAgendarCita}>Agendar cita</Link>
+        <Link to="/informaciones">Informaciones</Link>
         <Link to="/" onClick={handleClickMisReservas}>Mis reservas</Link>
         <Link to="/">Chat directo</Link>
       </nav>
+      <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
+        <Formulario onClose={handleCloseModal} />
+      </Modal>
     </header>
   );
 };
