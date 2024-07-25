@@ -191,6 +191,35 @@ app.get('/especialista/:id', (req, res) => {
   });
 });
 
+app.put('/modificarEspecialista/:id', (req, res) => {
+  const { id } = req.params;
+  const { nombre, rut, contacto, horarioAtencion, correo, especialidad } = req.body;
+  const connection = mysql.createConnection(credentials);
+
+  connection.query(
+    'UPDATE especialista SET nombre = ?, rutEspecialista = ?, contacto = ?, horarioAtencion = ?, correo = ?, especialidad = ? WHERE id = ?',
+    [nombre, rut, contacto, horarioAtencion, correo, especialidad, id],
+    (error, results) => {
+      if (error) {
+        console.error('Error al modificar el especialista:', error);
+        res.status(500).send('Error al modificar el especialista');
+      } else {
+        if (results.affectedRows === 0) {
+          res.status(404).send('Especialista no encontrado');
+        } else {
+          res.status(200).json({
+            status: 'success',
+            message: 'Especialista modificado correctamente',
+          });
+        }
+      }
+    }
+  );
+
+  connection.end();
+});
+
+
 app.delete('/eliminarEspecialista/:id', (req, res) => {
   const connection = mysql.createConnection(credentials);
   const { id } = req.params;

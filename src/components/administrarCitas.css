@@ -114,6 +114,7 @@
   border-radius: 4px;
   background-color: #fff; /* Fondo blanco en los campos */
   color: #333; /* Color del texto en los campos */
+  margin-left: 10px;
 }
 
 /* Estilos para los botones del formulario */
