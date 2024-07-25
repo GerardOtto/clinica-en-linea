@@ -140,7 +140,7 @@ function ListarEspecialistas() {
             <tr key={especialista.id}>
               <td>{especialista.id}</td>
               <td>{especialista.nombre}</td>
-              <td>{especialista.rut}</td>
+              <td>{especialista.rutEspecialista}</td>
               <td>{especialista.contacto}</td>
               <td>{especialista.horarioAtencion}</td>
               <td>{especialista.correo}</td>

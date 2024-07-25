@@ -221,9 +221,11 @@ const VerCitas = ({ inSesion }) => {
               <select name="estado" value={formValues.estado} onChange={handleInputChange}>
                 <option value="pendiente">Pendiente</option>
                 <option value="realizada">Realizada</option>
+                <option value="pacienteNoAsiste">Paciente no asiste</option>
                 <option value="cancelada">Cancelada</option>
               </select>
             </label>
+            
             <button type="submit">Guardar cambios</button>
           </form>
         </Modal>

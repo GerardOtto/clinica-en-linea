@@ -96,12 +96,15 @@
 .editar-cita-form {
   display:  inline-flex;
   flex-direction: column;
+  background-color: rgb(16, 58, 57);
+  margin-top: 10px;
+  border-radius: 4px;
 }
 
 /* Estilos para cada etiqueta del formulario */
 .editar-cita-form label {
   margin-bottom: 15px; /* Espaciado entre los campos */
-  color: #fff; /* Color del texto */
+  color: #ffffff; /* Color del texto */
   font-size: 16px; /* Tamaño de fuente */
 }
 
@@ -126,6 +129,19 @@
   color: #fff;
   cursor: pointer;
   font-size: 16px;
+}
+
+.editar-cita-form button[type="submit"] {
+  margin-top: 10px;
+}
+
+.editar-cita-form input {
+  width: 50%;
+}
+
+.editar-cita-form h2 {
+  color: white;
+  margin-top: 20px;
 }
 
   

@@ -219,6 +219,32 @@ app.put('/modificarEspecialista/:id', (req, res) => {
   connection.end();
 });
 
+app.post('/verificar-especialista', (req, res) => {
+  const { rutPaciente } = req.body;
+  const connection = mysql.createConnection(credentials);
+
+  connection.query(
+    'SELECT id FROM especialista WHERE rutEspecialista = ?',
+    [rutPaciente],
+    (error, results) => {
+      if (error) {
+        console.error('Error al consultar la base de datos:', error);
+        res.status(500).send('Error al consultar la base de datos');
+      } else {
+        if (results.length > 0) {
+          // Si el RUT pertenece a un especialista, devolver el id del especialista
+          const idEspecialista = results[0].id;
+          res.status(200).json({ isEspecialista: true, idEspecialista });
+        } else {
+          // No se encontró un especialista con el RUT proporcionado
+          res.status(200).json({ isEspecialista: false });
+        }
+      }
+      connection.end();
+    }
+  );
+});
+
 
 app.delete('/eliminarEspecialista/:id', (req, res) => {
   const connection = mysql.createConnection(credentials);

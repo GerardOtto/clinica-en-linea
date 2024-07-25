@@ -47,10 +47,29 @@ const Formulario = ({ onClose }) => {
             localStorage.setItem('token', token);
             alert('Inicio de sesión exitoso como ADMIN!');
           }
+          
           alert('Inicio de sesión exitoso!');
           const sesion = data.rutPaciente;
           localStorage.setItem('token-sesion', sesion);
           console.log('Token de sesión:', sesion);
+
+          // Verificar si es especialista
+          const especialistaResponse = await fetch('http://localhost:4000/verificar-especialista', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ rutPaciente }),
+          });
+
+          const especialistaData = await especialistaResponse.json();
+
+          if (especialistaData.isEspecialista) {
+            localStorage.setItem('esEspecialista', especialistaData.idEspecialista);
+            console.log('Usuario es especialista, ID:', especialistaData.idEspecialista);
+            alert('Bienvenido especialista!');
+          }
+
           window.location.reload();
           onClose(); // Cerrar el modal después del inicio de sesión exitoso
         } else {
