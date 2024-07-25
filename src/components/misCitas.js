@@ -83,11 +83,15 @@ const MisCitas = () => {
               <span className="cita-fecha">{formatDate(cita.fecha)} entre las {cita.hora} horas</span>
               <span className="cita-descripcion">{cita.descripcion}</span>
               <span className="cita-especialista">Especialista: {especialistas[cita.especialista_id] || 'Cargando...'}</span>
-              <span style={{paddingTop:"10px", paddingBottom:"10px"}}>Imagen adjunta: </span>
+              {cita.imagen ? (
+             <span style={{paddingTop:"10px", paddingBottom:"10px"}}>Imagen adjunta: </span>
+            ) : (
+              <div style={{paddingTop:"5px"}}></div>
+            )}
               <span className='cita-imagen'>{cita.imagen && (
                   <img src={`http://localhost:4000/${cita.imagen}`} alt="Imagen adjunta a la cita" width="300" />
                 )}</span>
-              <span className='cita-estado'>{cita.estado}</span>
+              <span className='cita-estado'>Estado de la cita: {cita.estado}</span>
             </li>
           ))}
         </ul>

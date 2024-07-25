@@ -113,7 +113,7 @@ class FormularioRegistro extends Component {
     const { nombre, email, confirmarEmail, rutPaciente, contrasena, recontrasena, telefono, errors } = this.state;
 
     return (
-      <div className="formulario-registro">
+      <div className="formulario-registro" style={{marginTop:"40px"}}>
         <form id="registro" name="registro" noValidate onSubmit={this.handleSubmit}>
           <h2>Ingrese sus datos para el registro.</h2>
           <div>

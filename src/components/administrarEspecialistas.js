@@ -73,9 +73,10 @@ function ListarEspecialistas() {
       <h2>Listado de Especialistas</h2>
       <table className="styled-table">
         <thead>
-          <tr>
+          <tr style={{backgroundColor:"#f3f3f3"}}>
             <th>ID</th>
             <th>Nombre</th>
+            <th>RUT</th>
             <th>Contacto</th>
             <th>Horario de Atención</th>
             <th>Correo</th>
@@ -89,6 +90,7 @@ function ListarEspecialistas() {
             <tr key={especialista.id}>
               <td>{especialista.id}</td>
               <td>{especialista.nombre}</td>
+              <td>{especialista.rut}</td>
               <td>{especialista.contacto}</td>
               <td>{especialista.horarioAtencion}</td>
               <td>{especialista.correo}</td>

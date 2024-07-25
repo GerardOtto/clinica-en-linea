@@ -132,10 +132,10 @@ app.post('/crearUsuario', (req, res) => {
 app.post('/crearEspecialista', (req, res) => {
   console.log('Valor de req.body:', req.body);
   const connection = mysql.createConnection(credentials);
-  const { id, nombre, contacto, horarioAtencion, correo, especialidad } = req.body;
+  const { id, nombre, contacto, horarioAtencion, correo, especialidad, rutEspecialista } = req.body;
   connection.query(
-    'INSERT INTO especialista (id, nombre, contacto, horarioAtencion, correo, especialidad) VALUES (?, ?, ?, ?, ?, ?)',
-    [id, nombre, contacto, horarioAtencion, correo, especialidad],
+    'INSERT INTO especialista (id, nombre, contacto, horarioAtencion, correo, especialidad, rutEspecialista) VALUES (?, ?, ?, ?, ?, ?, ?)',
+    [id, nombre, contacto, horarioAtencion, correo, especialidad, rutEspecialista],
     (error, results) => {
       if (error) {
         console.error(error);

@@ -19,6 +19,10 @@
   .form-group {
     margin-bottom: 15px;
   }
+
+  .form-group textarea {
+    width: 100%;
+  }
   
   .form-group label {
     display: block;
@@ -57,3 +61,45 @@
     font-weight: bold;
     margin-bottom: 10px;
   }
+
+  .agendar-cita-container {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .professional-card2 {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 20px;
+    width: 300px;
+    text-align: center;
+    margin-top: 50px;
+    margin-left: -590px;
+    margin-right: 250px;
+  }
+  
+  .image-container {
+    height: 150px;
+    width: 150px;
+    margin: 0 auto 10px;
+    background-color: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    border-radius: 50%; /* Para hacer la imagen redonda */
+  }
+  
+  .profile-image {
+    height: 100%;
+    width: auto;
+  }
+  
+  .professional-info {
+    margin-top: 10px;
+    color: rgb(69, 130, 131);
+  }
+  
+
+  

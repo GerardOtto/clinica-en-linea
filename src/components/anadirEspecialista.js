@@ -7,6 +7,7 @@ function AnadirEspecialista() {
   const [formData, setFormData] = useState({
     nombre: '',
     contacto: '',
+    rutEspecialista:'',
     horarioAtencion: '',
     correo: '',
     especialidad: '' // Agregando el campo especialidad
@@ -36,6 +37,7 @@ function AnadirEspecialista() {
         setFormData({
           nombre: '',
           contacto: '',
+          rutEspecialista:'',
           horarioAtencion: '',
           correo: '',
           especialidad: '' // Reiniciando el campo especialidad
@@ -71,6 +73,16 @@ function AnadirEspecialista() {
             id="contacto"
             name="contacto"
             value={formData.contacto}
+            onChange={handleChange}
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="rutEspecialista">RUT:</label>
+          <input
+            type="text"
+            id="rutEspecialista"
+            name="rutEspecialista"
+            value={formData.rutEspecialista}
             onChange={handleChange}
           />
         </div>

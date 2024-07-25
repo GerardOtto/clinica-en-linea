@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import './agendarCita.css';
 
 const AgendarCita = () => {
@@ -10,7 +10,9 @@ const AgendarCita = () => {
   const [especialistas, setEspecialistas] = useState([]);
   const [errors, setErrors] = useState({});
   const [imagen, setImagen] = useState(null);
+  const [especialistaSeleccionado, setEspecialistaSeleccionado] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const token = localStorage.getItem('token-sesion');
@@ -20,6 +22,21 @@ const AgendarCita = () => {
       fetchEspecialistas();
     }
   }, [navigate]);
+
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const especialistaId = queryParams.get('especialistaId');
+    if (especialistaId) {
+      setEspecialista(especialistaId);
+      fetchEspecialista(especialistaId);
+    }
+  }, [location]);
+
+  useEffect(() => {
+    if (especialista) {
+      fetchEspecialista(especialista);
+    }
+  }, [especialista]);
 
   const fetchEspecialistas = async () => {
     try {
@@ -31,6 +48,19 @@ const AgendarCita = () => {
       setEspecialistas(data);
     } catch (error) {
       console.error('Error al recuperar especialistas:', error);
+    }
+  };
+
+  const fetchEspecialista = async (id) => {
+    try {
+      const response = await fetch(`http://localhost:4000/especialista/${id}`);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json();
+      setEspecialistaSeleccionado(data);
+    } catch (error) {
+      console.error('Error al recuperar el especialista:', error);
     }
   };
 
@@ -47,9 +77,6 @@ const AgendarCita = () => {
     }
     if (!hora) {
       newErrors.hora = 'Por favor, seleccione una hora';
-    }
-    if (!informacionAdicional) {
-      newErrors.informacionAdicional = 'Por favor, ingrese información adicional';
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -91,76 +118,99 @@ const AgendarCita = () => {
   };
 
   return (
-    <div className="agendar-cita">
-      <h2>Agendar Cita</h2>
-      <form onSubmit={handleSubmit} encType="multipart/form-data">
-        <div className="form-group">
-          <label htmlFor="especialista">Seleccione especialista:</label>
-          <select
-            id="especialista"
-            value={especialista}
-            onChange={(e) => setEspecialista(e.target.value)}
-          >
-            <option value="">Seleccione...</option>
-            {especialistas.map((esp) => (
-              <option key={esp.id} value={esp.id}>
-                {esp.nombre}
-              </option>
-            ))}
-          </select>
-          {errors.especialista && <span className="error-message">{errors.especialista}</span>}
+    <div className="agendar-cita-container">
+      <div className="agendar-cita">
+        <h2>Agendar Cita</h2>
+        <form onSubmit={handleSubmit} encType="multipart/form-data">
+          <div className="form-group">
+            <label htmlFor="especialista">Seleccione especialista:</label>
+            <select
+              id="especialista"
+              value={especialista}
+              onChange={(e) => setEspecialista(e.target.value)}
+            >
+              <option value="">Seleccione...</option>
+              {especialistas.map((esp) => (
+                <option key={esp.id} value={esp.id}>
+                  {esp.nombre}
+                </option>
+              ))}
+            </select>
+            {errors.especialista && <span className="error-message">{errors.especialista}</span>}
+          </div>
+          <div className="form-group">
+            <label htmlFor="fecha">Seleccione una fecha:</label>
+            <input
+              type="date"
+              id="fecha"
+              value={fecha}
+              onChange={(e) => setFecha(e.target.value)}
+            />
+            {errors.fecha && <span className="error-message">{errors.fecha}</span>}
+          </div>
+          <div className="form-group">
+            <label htmlFor="hora">Seleccione una hora:</label>
+            <select
+              id="hora"
+              value={hora}
+              onChange={(e) => setHora(e.target.value)}
+            >
+              <option value="">Seleccione...</option>
+              <option value="08:00-09:00">08:00 - 09:00</option>
+              <option value="09:00-10:00">09:00 - 10:00</option>
+              <option value="10:00-11:00">10:00 - 11:00</option>
+              <option value="11:00-12:00">11:00 - 12:00</option>
+              <option value="12:00-13:00">12:00 - 13:00</option>
+              <option value="13:00-14:00">13:00 - 14:00</option>
+              <option value="14:00-15:00">14:00 - 15:00</option>
+              <option value="15:00-16:00">15:00 - 16:00</option>
+              <option value="16:00-17:00">16:00 - 17:00</option>
+              <option value="17:00-18:00">17:00 - 18:00</option>
+            </select>
+            {errors.hora && <span className="error-message">{errors.hora}</span>}
+          </div>
+          <div className="form-group">
+            <label htmlFor="informacionAdicional">Mensaje para el especialista:</label>
+            <textarea
+              id="informacionAdicional"
+              value={informacionAdicional}
+              onChange={(e) => setInformacionAdicional(e.target.value)}
+            />
+            {errors.informacionAdicional && <span className="error-message">{errors.informacionAdicional}</span>}
+          </div>
+          <div className="form-group">
+            <label htmlFor="imagen">Adjuntar Imagen:</label>
+            <input
+              type="file"
+              id="imagen"
+              accept="image/*"
+              onChange={(e) => setImagen(e.target.files[0])}
+            />
+          </div>
+          <button type="submit">Solicitar cita</button>
+        </form>
+      </div>
+      {especialistaSeleccionado && (
+        <div className="professional-card2">
+          <div className="image-container">
+            {especialistaSeleccionado.imagen ? (
+              <img
+                src={`http://localhost:4000/${especialistaSeleccionado.imagen}`}
+                alt="Imagen del profesional"
+                className="profile-image"
+              />
+            ) : (
+              'Imagen del profesional'
+            )}
+          </div>
+          <div className="professional-info">
+            <h2>{especialistaSeleccionado.nombre}</h2>
+            <p>Contacto: {especialistaSeleccionado.contacto}</p>
+            <p>Especialidad: {especialistaSeleccionado.especialidad}</p>
+            <p>Horario de Atención: {especialistaSeleccionado.horarioAtencion}</p>
+          </div>
         </div>
-        <div className="form-group">
-          <label htmlFor="fecha">Seleccione una fecha:</label>
-          <input
-            type="date"
-            id="fecha"
-            value={fecha}
-            onChange={(e) => setFecha(e.target.value)}
-          />
-          {errors.fecha && <span className="error-message">{errors.fecha}</span>}
-        </div>
-        <div className="form-group">
-          <label htmlFor="hora">Seleccione una hora:</label>
-          <select
-            id="hora"
-            value={hora}
-            onChange={(e) => setHora(e.target.value)}
-          >
-            <option value="">Seleccione...</option>
-            <option value="08:00-09:00">08:00 - 09:00</option>
-            <option value="09:00-10:00">09:00 - 10:00</option>
-            <option value="10:00-11:00">10:00 - 11:00</option>
-            <option value="11:00-12:00">11:00 - 12:00</option>
-            <option value="12:00-13:00">12:00 - 13:00</option>
-            <option value="13:00-14:00">13:00 - 14:00</option>
-            <option value="14:00-15:00">14:00 - 15:00</option>
-            <option value="15:00-16:00">15:00 - 16:00</option>
-            <option value="16:00-17:00">16:00 - 17:00</option>
-            <option value="17:00-18:00">17:00 - 18:00</option>
-          </select>
-          {errors.hora && <span className="error-message">{errors.hora}</span>}
-        </div>
-        <div className="form-group">
-          <label htmlFor="informacionAdicional">Información adicional:</label>
-          <textarea
-            id="informacionAdicional"
-            value={informacionAdicional}
-            onChange={(e) => setInformacionAdicional(e.target.value)}
-          />
-          {errors.informacionAdicional && <span className="error-message">{errors.informacionAdicional}</span>}
-        </div>
-        <div className="form-group">
-          <label htmlFor="imagen">Adjuntar Imagen:</label>
-          <input
-            type="file"
-            id="imagen"
-            accept="image/*"
-            onChange={(e) => setImagen(e.target.files[0])}
-          />
-        </div>
-        <button type="submit">Solicitar cita</button>
-      </form>
+      )}
     </div>
   );
 };

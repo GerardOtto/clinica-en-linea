@@ -19,7 +19,6 @@
   }
   
   .styled-table thead tr {
-    background-color: #009879;
     color: #ffffff;
     text-align: left;
     font-weight: bold;
@@ -28,7 +27,6 @@
   .styled-table th,
   .styled-table td {
     padding: 12px 15px;
-    border: 1px solid #ddd;
     font-style: oblique;
     color: #04251f;
   }
