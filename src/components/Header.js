@@ -13,6 +13,7 @@ const Header = ({ inSesion, isAdmin }) => {
   const handleLogout = () => {
     localStorage.removeItem('token-sesion');
     localStorage.removeItem('token');
+    localStorage.removeItem('esEspecialista'); // Eliminar el token esEspecialista
     window.location.reload();
   };
 
