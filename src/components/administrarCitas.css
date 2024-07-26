@@ -81,19 +81,9 @@
       text-align: left;
     }
   }
-  /* Estilos para el contenedor del formulario de edición */
-.editar-cita-form-container {
-  margin-top: 20px;
-  padding: 20px;
-  background-color: rgb(16, 58, 57); /* Fondo del formulario */
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  position: relative;
-  width: 20%;
-}
 
 /* Estilos para el formulario */
-.editar-cita-form {
+.editar-cita-form { 
   display:  inline-flex;
   flex-direction: column;
   background-color: rgb(16, 58, 57);

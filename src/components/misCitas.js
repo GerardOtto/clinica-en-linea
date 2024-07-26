@@ -1,11 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { redirect } from 'react-router-dom';
+import { useNavigate, redirect } from 'react-router-dom';
+import Modal from './modal2'; // Importar el componente Modal
 import './misCitas.css';
 
 const MisCitas = () => {
   const [citasComoPaciente, setCitasComoPaciente] = useState([]);
   const [citasComoEspecialista, setCitasComoEspecialista] = useState([]);
   const [especialistas, setEspecialistas] = useState({});
+  const [editCita, setEditCita] = useState(null);
+  const [formValues, setFormValues] = useState({
+    rutPaciente: '',
+    fecha: '',
+    hora: '',
+    descripcion: '',
+    especialista_id: '',
+    estado: '',
+  });
+  const [showEditModal, setShowEditModal] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchCitas();
@@ -86,11 +98,41 @@ const MisCitas = () => {
   };
 
   // Función para manejar la edición de una cita
-  const handleEditCita = (citaId) => {
-    // Implementar la lógica de edición, por ejemplo, redirigir a un formulario de edición
-    console.log(`Editar cita con ID: ${citaId}`);
-    // Ejemplo: redirigir a una ruta de edición con el ID de la cita
-    // navigate(`/editarCita/${citaId}`);
+  const handleEditCita = (cita) => {
+    setEditCita(cita);
+    setFormValues(cita);
+    setShowEditModal(true);
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormValues({
+      ...formValues,
+      [name]: value
+    });
+  };
+
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch(`http://localhost:4000/citas/${editCita.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formValues)
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const updatedCita = await response.json();
+      setCitasComoEspecialista(citasComoEspecialista.map(cita => (cita.id === updatedCita.id ? updatedCita : cita)));
+      setEditCita(null);
+      setShowEditModal(false);
+      fetchCitas(); // Refrescar la lista de citas
+    } catch (error) {
+      console.error('Error al actualizar la cita:', error);
+    }
   };
 
   // Función para manejar la cancelación de una cita
@@ -192,16 +234,94 @@ const MisCitas = () => {
                 )}
               </span>
               <span className="cita-estado">Estado de la cita: {cita.estado}</span>
-              {/* Botones para editar y cancelar */}
-              <div className="cita-acciones">
-                <button onClick={() => handleEditCita(cita.id)}>Editar</button>
-                <button onClick={() => handleCancelCita(cita.id)}>Cancelar</button>
-              </div>
+              <button className="button" onClick={() => handleEditCita(cita)}>
+                Editar cita
+              </button>
+              <button className="button" onClick={() => handleCancelCita(cita.id)}>
+                Cancelar cita
+              </button>
             </li>
           ))}
         </ul>
       ) : (
         <p>No hay citas programadas como especialista.</p>
+      )}
+
+      {/* Modal para edición de cita */}
+      {showEditModal && (
+        <Modal isOpen={showEditModal} onClose={() => setShowEditModal(false)}>
+          <form className="formulario-modificacion-cita" onSubmit={handleFormSubmit}>
+            <h2>Editar Cita</h2>
+            
+              <label>Rut Paciente:
+                <input
+                  type="text"
+                  name="rutPaciente"
+                  value={formValues.rutPaciente}
+                  onChange={handleInputChange}
+                  required
+                />
+              </label>
+            
+              <label>Fecha:
+              <input
+                type="date"
+                name="fecha"
+                value={formValues.fecha}
+                onChange={handleInputChange}
+                required
+              />
+              </label>
+            
+            
+              <label>Hora:
+              <input
+                type="text"
+                name="hora"
+                value={formValues.hora}
+                onChange={handleInputChange}
+                required
+              />
+              </label>
+            
+            
+              <label>Descripción:
+              <textarea
+                name="descripcion"
+                value={formValues.descripcion}
+                onChange={handleInputChange}
+                required
+              />
+              </label>
+            
+            
+              <label>Especialista ID:
+              <input
+                type="text"
+                name="especialista_id"
+                value={formValues.especialista_id}
+                onChange={handleInputChange}
+                required
+              />
+              </label>
+            
+              <label>Estado:
+              <select
+                name="estado"
+                value={formValues.estado}
+                onChange={handleInputChange}
+                required
+              >
+                <option value="Pendiente">Pendiente</option>
+                <option value="Confirmada">Realizada</option>
+                <option value="Paciente-no-asiste">Paciente no asiste</option>
+                <option value="Cancelada">Cancelada</option>
+              </select>
+              </label>
+            
+            <button type="submit">Guardar Cambios</button>
+          </form>
+        </Modal>
       )}
     </div>
   );
