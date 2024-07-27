@@ -1,11 +1,18 @@
 // Formulario.js
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './formulario-registro.css';
 
 const Formulario = ({ onClose }) => {
   const [rutPaciente, setrutPaciente] = useState('');
   const [contrasena, setContrasena] = useState('');
   const [errors, setErrors] = useState({});
+  const navigate = useNavigate();
+
+  const handleRegistrarse = () => {
+    onClose();
+    navigate('/registro');
+  };
 
   const handleIngresar = async (event) => {
     event.preventDefault();
@@ -118,9 +125,17 @@ const Formulario = ({ onClose }) => {
             <span className="error-message">{errors.contrasenaError}</span>
           )}
         </div>
-        <button type="submit" id="ingresar" name="ingresar">
-          Ingresar
-        </button>
+        <div className='botones'>
+          <div className='crearCuenta'>
+            <button type="button" id="registrarse" name="registrarse" style={{height:"50px"}} onClick={handleRegistrarse}>
+              Crear cuenta
+            </button>
+            <label className='textoBoton'>Si no tiene una cuenta, registrese aquí</label>
+          </div>
+          <button type="submit" id="ingresar" name="ingresar" style={{height:"50px",marginLeft:"10px"}}>
+            Ingresar
+          </button>
+        </div>
       </form>
     </div>
   );

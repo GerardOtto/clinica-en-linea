@@ -62,3 +62,20 @@
 h2 {
   margin-bottom: 20px;
 }
+
+.formulario-registro .botones {
+  display: flex;
+  flex-direction: row;
+}
+
+.formulario-registro .botones .textoBoton{
+  color: rgb(255, 255, 255);
+  font-size: 15px;
+  width: 15 0px;
+  margin-top: 10px;
+}
+
+.formulario-registro .botones .crearCuenta {
+  display: flex;
+  flex-direction: column;
+}

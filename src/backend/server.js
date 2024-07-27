@@ -31,6 +31,28 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+// Nueva ruta para búsqueda
+app.get('/buscar', (req, res) => {
+  const { termino } = req.query;
+  const connection = mysql.createConnection(credentials);
+
+  // Consulta que busca en las columnas 'nombre' y 'especialidad' de la tabla 'especialista'
+  const query = `
+    SELECT * FROM especialista
+    WHERE nombre LIKE ? OR especialidad LIKE ?
+  `;
+  
+  connection.query(query, [`%${termino}%`, `%${termino}%`], (error, results) => {
+    if (error) {
+      console.error('Error al realizar la búsqueda:', error);
+      res.status(500).send('Error al realizar la búsqueda');
+    } else {
+      res.status(200).json(results);
+    }
+    connection.end();
+  });
+});
+
 app.post('/subirImagen/:id', upload.single('imagen'), (req, res) => {
   const { id } = req.params;
   const imagePath = path.join('uploads', req.file.filename);  // Guardar la ruta relativa de la imagen

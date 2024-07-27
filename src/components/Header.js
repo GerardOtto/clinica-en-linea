@@ -8,12 +8,14 @@ import Formulario from './formulario-login';
 
 const Header = ({ inSesion, isAdmin }) => {
   const [isModalOpen, setModalOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
   const navigate = useNavigate();
 
   const handleLogout = () => {
     localStorage.removeItem('token-sesion');
     localStorage.removeItem('token');
-    localStorage.removeItem('esEspecialista'); // Eliminar el token esEspecialista
+    localStorage.removeItem('esEspecialista');
     window.location.reload();
   };
 
@@ -45,12 +47,33 @@ const Header = ({ inSesion, isAdmin }) => {
     }
   };
 
+  // Función para manejar el cambio en el input de búsqueda
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+    handleSearch(event.target.value); // Realizar la búsqueda cuando cambia el input
+  };
+
+  // Función para manejar la búsqueda
+  const handleSearch = async (term) => {
+    if (term.length > 1) {
+      try {
+        const response = await fetch(`http://localhost:4000/buscar?termino=${term}`);
+        const results = await response.json();
+        setSearchResults(results);
+      } catch (error) {
+        console.error('Error fetching search results:', error);
+      }
+    } else {
+      setSearchResults([]);
+    }
+  };
+
   return (
     <header className="header">
       <div className="logo">
         <Link to="/">
           <button className="logo-button">
-            <img src={Logo1} alt="Cafan Logo" style={{ width: "350px", height: "110px" }} />
+            <img src={Logo1} alt="Cafan Logo" style={{ width: '350px', height: '110px' }} />
           </button>
         </Link>
       </div>
@@ -58,7 +81,7 @@ const Header = ({ inSesion, isAdmin }) => {
         <ul className="nav-buttons">
           <li>
             <Link to="/registro">
-              <button>Registrarse</button>
+              <button>Crear cuenta</button>
             </Link>
           </li>
           <li>
@@ -69,20 +92,37 @@ const Header = ({ inSesion, isAdmin }) => {
             )}
           </li>
           <li>
-            {isAdmin && <Link to='/administrarEspecialistas'><button>Administrar especialistas</button></Link>}
+            {isAdmin && <Link to="/administrarEspecialistas"><button>Administrar especialistas</button></Link>}
           </li>
           <li>
-            {isAdmin && <Link to='/administrarCitas'><button>Administrar citas</button></Link>}
+            {isAdmin && <Link to="/administrarCitas"><button>Administrar citas</button></Link>}
           </li>
         </ul>
-        <input type="text" placeholder="Buscar" className="search-input" />
+        <div className="search-container">
+          <input
+            type="text"
+            placeholder="Buscar especialista/especialidad"
+            className="search-input"
+            value={searchTerm}
+            onChange={handleSearchChange}
+          />
+          {searchResults.length > 0 && (
+            <ul className="search-dropdown">
+              {searchResults.map((result) => (
+                <li key={result.id} className="search-item">
+                  {result.nombre} - {result.especialidad}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       </div>
       <nav className="nav-links">
         <Link to="/profesionales">Profesionales</Link>
         <Link to="/" onClick={handleClickAgendarCita}>Agendar cita</Link>
         <Link to="/informaciones">Informaciones</Link>
         <Link to="/" onClick={handleClickMisReservas}>Mis reservas</Link>
-        <Link to="/">Chat directo</Link>
+        <Link to="https://wa.me/975348882?text=Hola! Me gustaría solicitar información sobre el centro Cafan!">Chat directo</Link>
       </nav>
       <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
         <Formulario onClose={handleCloseModal} />
