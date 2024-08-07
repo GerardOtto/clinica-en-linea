@@ -90,17 +90,19 @@ const MisCitas = () => {
 
   const formatDate = (isoString) => {
     const date = new Date(isoString);
-    return date.toLocaleDateString('es-ES', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
+    const day = date.getDate();
+    const month = date.getMonth() + 1; // Los meses son indexados desde 0
+    const year = date.getFullYear();
+    return `El día ${day} del ${month} del ${year}`;
   };
 
   // Función para manejar la edición de una cita
   const handleEditCita = (cita) => {
     setEditCita(cita);
-    setFormValues(cita);
+    setFormValues({
+      ...cita,
+      fecha: formatDate(cita.fecha) // Asegurarse de que el campo de fecha tenga el formato correcto
+    });
     setShowEditModal(true);
   };
 
@@ -285,8 +287,9 @@ const MisCitas = () => {
               </label>
             
             
-              <label>Descripción:
+              <label style={{display:"inline-flex", paddingInline:"auto"}}>Descripción:
               <textarea
+                placeholder='Ingrese datos y/o observaciones de la cita.'
                 name="descripcion"
                 value={formValues.descripcion}
                 onChange={handleInputChange}
@@ -311,8 +314,7 @@ const MisCitas = () => {
                 value={formValues.estado}
                 onChange={handleInputChange}
                 required
-              >
-                <option value="Pendiente">Pendiente</option>
+              >>
                 <option value="Confirmada">Realizada</option>
                 <option value="Paciente-no-asiste">Paciente no asiste</option>
                 <option value="Cancelada">Cancelada</option>
