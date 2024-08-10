@@ -13,8 +13,8 @@
   }
   
   .modal-content {
-    background: #fff;
     padding: 20px;
+    background-color: rgb(28, 97, 96);
     border-radius: 5px;
     position: relative;
     text-align: center; /* Centra el contenido */

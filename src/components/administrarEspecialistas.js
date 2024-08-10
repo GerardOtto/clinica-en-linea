@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import "../App.css";
 import './administrarEspecialistas.css';
+import './modal.css'; // Importa los estilos del modal
 import { Link } from 'react-router-dom';
 
 function ListarEspecialistas() {
@@ -15,6 +16,7 @@ function ListarEspecialistas() {
     correo: '',
     especialidad: ''
   });
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     fetchEspecialistas();
@@ -75,7 +77,16 @@ function ListarEspecialistas() {
   };
 
   const handleEditClick = (especialista) => {
-    setEditData(especialista);
+    setEditData({
+      id: especialista.id,
+      nombre: especialista.nombre,
+      rut: especialista.rutEspecialista,
+      contacto: especialista.contacto,
+      horarioAtencion: especialista.horarioAtencion,
+      correo: especialista.correo,
+      especialidad: especialista.especialidad,
+    });
+    setIsModalOpen(true); // Abrir el modal
   };
 
   const handleInputChange = (e) => {
@@ -104,6 +115,7 @@ function ListarEspecialistas() {
       const result = await response.json();
       alert(result.message);
       await fetchEspecialistas();
+      setIsModalOpen(false); // Cerrar el modal después de guardar cambios
       setEditData({
         id: '',
         nombre: '',
@@ -116,6 +128,10 @@ function ListarEspecialistas() {
     } catch (error) {
       console.error('Error al modificar especialista:', error);
     }
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
   };
 
   return (
@@ -173,36 +189,41 @@ function ListarEspecialistas() {
       </table>
       <Link to={'/anadirEspecialista'}><button>Añadir especialistas</button></Link>
 
-      {editData.id && (
-        <form onSubmit={handleEditSubmit} className="edit-form">
-          <h2>Modificar Especialista</h2>
-          <label>
-            Nombre:
-            <input type="text" name="nombre" value={editData.nombre} onChange={handleInputChange} />
-          </label>
-          
-          <label>
-            RUT:
-            <input type="text" name="rut" value={editData.rut} onChange={handleInputChange} />
-          </label>
-          <label>
-            Contacto:
-            <input type="text" name="contacto" value={editData.contacto} onChange={handleInputChange} />
-          </label>
-          <label>
-            Horario de Atención:
-            <input type="text" name="horarioAtencion" value={editData.horarioAtencion} onChange={handleInputChange} />
-          </label>
-          <label>
-            Correo:
-            <input type="text" name="correo" value={editData.correo} onChange={handleInputChange} />
-          </label>
-          <label>
-            Especialidad:
-            <input type="text" name="especialidad" value={editData.especialidad} onChange={handleInputChange} />
-          </label>
-          <button type="submit">Guardar cambios</button>
-        </form>
+      {isModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <form onSubmit={handleEditSubmit} className="edit-form">
+              <button className="close-button" onClick={closeModal}>X</button>
+              <h2>Modificar Especialista</h2>
+              <label>
+                Nombre:
+                <input type="text" name="nombre" value={editData.nombre} onChange={handleInputChange} />
+              </label>
+              
+              <label>
+                RUT:
+                <input type="text" name="rut" value={editData.rut} onChange={handleInputChange} />
+              </label>
+              <label>
+                Contacto:
+                <input type="text" name="contacto" value={editData.contacto} onChange={handleInputChange} />
+              </label>
+              <label>
+                Horario de Atención:
+                <input type="text" name="horarioAtencion" value={editData.horarioAtencion} onChange={handleInputChange} />
+              </label>
+              <label>
+                Correo:
+                <input type="text" name="correo" value={editData.correo} onChange={handleInputChange} />
+              </label>
+              <label>
+                Especialidad:
+                <input type="text" name="especialidad" value={editData.especialidad} onChange={handleInputChange} />
+              </label>
+              <button type="submit">Guardar cambios</button>
+            </form>
+          </div>
+        </div>
       )}
     </div>
   );

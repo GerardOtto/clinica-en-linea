@@ -6,7 +6,7 @@ import './misCitas.css';
 const MisCitas = () => {
   const [citasComoPaciente, setCitasComoPaciente] = useState([]);
   const [citasComoEspecialista, setCitasComoEspecialista] = useState([]);
-  const [especialistas, setEspecialistas] = useState({});
+  const [especialistas, setEspecialistas] = useState([]);
   const [editCita, setEditCita] = useState(null);
   const [formValues, setFormValues] = useState({
     rutPaciente: '',
@@ -16,35 +16,31 @@ const MisCitas = () => {
     especialista_id: '',
     estado: '',
   });
+  const [fechaOriginal, setFechaOriginal] = useState(''); // Nuevo estado para la fecha original
   const [showEditModal, setShowEditModal] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchCitas();
+    fetchEspecialistas(); // Obtener la lista de especialistas
   }, []);
 
-  const fetchEspecialista = async (id) => {
+  const fetchEspecialistas = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/especialista/${id}`);
+      const response = await fetch('http://localhost:4000/listarEspecialistas');
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
       const data = await response.json();
-      setEspecialistas((prevState) => ({
-        ...prevState,
-        [id]: data.nombre, // Assuming the response contains the name of the specialist
-      }));
+      setEspecialistas(data);
     } catch (error) {
-      console.error(`Error al recuperar especialista con id ${id}:`, error);
+      console.error('Error al recuperar especialistas:', error);
     }
   };
 
   const fetchCitas = async () => {
     const tokenSesion = localStorage.getItem('token-sesion');
     const tokenEspecialista = localStorage.getItem('esEspecialista');
-
-    console.log('Token de sesión:', tokenSesion);
-    console.log('Token de especialista:', tokenEspecialista);
 
     if (!tokenSesion) {
       console.error('Debe iniciar sesión primero');
@@ -66,23 +62,13 @@ const MisCitas = () => {
 
       const data = await response.json();
 
-      // Filtrar citas como paciente
       const citasPaciente = data.filter((cita) => cita.rutPaciente === tokenSesion);
-
-      // Filtrar citas como especialista
       const citasEspecialista = tokenEspecialista
         ? data.filter((cita) => cita.especialista_id.toString() === tokenEspecialista)
         : [];
 
       setCitasComoPaciente(citasPaciente);
       setCitasComoEspecialista(citasEspecialista);
-
-      // Fetch details for each specialist
-      [...citasPaciente, ...citasEspecialista].forEach((cita) => {
-        if (!especialistas[cita.especialista_id]) {
-          fetchEspecialista(cita.especialista_id);
-        }
-      });
     } catch (error) {
       console.error('Error al recuperar citas:', error);
     }
@@ -91,18 +77,18 @@ const MisCitas = () => {
   const formatDate = (isoString) => {
     const date = new Date(isoString);
     const day = date.getDate();
-    const month = date.getMonth() + 1; // Los meses son indexados desde 0
+    const month = date.getMonth() + 1;
     const year = date.getFullYear();
     return `El día ${day} del ${month} del ${year}`;
   };
 
-  // Función para manejar la edición de una cita
   const handleEditCita = (cita) => {
     setEditCita(cita);
     setFormValues({
       ...cita,
-      fecha: formatDate(cita.fecha) // Asegurarse de que el campo de fecha tenga el formato correcto
+      fecha: formatDate(cita.fecha),
     });
+    setFechaOriginal(formatDate(cita.fecha)); // Guardar la fecha original
     setShowEditModal(true);
   };
 
@@ -110,7 +96,7 @@ const MisCitas = () => {
     const { name, value } = e.target;
     setFormValues({
       ...formValues,
-      [name]: value
+      [name]: value,
     });
   };
 
@@ -120,30 +106,29 @@ const MisCitas = () => {
       const response = await fetch(`http://localhost:4000/citas/${editCita.id}`, {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formValues)
+        body: JSON.stringify(formValues),
       });
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
       const updatedCita = await response.json();
-      setCitasComoEspecialista(citasComoEspecialista.map(cita => (cita.id === updatedCita.id ? updatedCita : cita)));
+      setCitasComoEspecialista(citasComoEspecialista.map((cita) => (cita.id === updatedCita.id ? updatedCita : cita)));
       setEditCita(null);
       setShowEditModal(false);
-      fetchCitas(); // Refrescar la lista de citas
+      fetchCitas();
     } catch (error) {
       console.error('Error al actualizar la cita:', error);
     }
   };
 
-  // Función para manejar la cancelación de una cita
   const handleCancelCita = async (citaId) => {
     const confirmar = window.confirm('¿Está seguro de que desea cancelar esta cita?');
     if (!confirmar) {
       return;
     }
-    
+
     try {
       const response = await fetch(`http://localhost:4000/cancelarCita/${citaId}`, {
         method: 'DELETE',
@@ -156,10 +141,7 @@ const MisCitas = () => {
         throw new Error('Network response was not ok');
       }
 
-      // Actualizar el estado de citas después de cancelar
-      setCitasComoEspecialista((prevCitas) =>
-        prevCitas.filter((cita) => cita.id !== citaId)
-      );
+      setCitasComoEspecialista((prevCitas) => prevCitas.filter((cita) => cita.id !== citaId));
       alert('Cita cancelada con éxito');
     } catch (error) {
       console.error('Error al cancelar la cita:', error);
@@ -176,13 +158,9 @@ const MisCitas = () => {
         <ul>
           {citasComoPaciente.map((cita) => (
             <li key={cita.id}>
-              <span className="cita-fecha">
-                {formatDate(cita.fecha)} entre las {cita.hora} horas
-              </span>
+              <span className="cita-fecha">{formatDate(cita.fecha)} entre las {cita.hora} horas</span>
               <span className="cita-descripcion">{cita.descripcion}</span>
-              <span className="cita-especialista">
-                Especialista: {especialistas[cita.especialista_id] || 'Cargando...'}
-              </span>
+              <span className="cita-especialista">Especialista: {especialistas.find(e => e.id === cita.especialista_id)?.nombre || 'Cargando...'}</span>
               {cita.imagen ? (
                 <span style={{ paddingTop: '10px', paddingBottom: '10px' }}>
                   Imagen adjunta:{' '}
@@ -190,15 +168,7 @@ const MisCitas = () => {
               ) : (
                 <div style={{ paddingTop: '5px' }}></div>
               )}
-              <span className="cita-imagen">
-                {cita.imagen && (
-                  <img
-                    src={`http://localhost:4000/${cita.imagen}`}
-                    alt="Imagen adjunta a la cita"
-                    width="300"
-                  />
-                )}
-              </span>
+              {cita.imagen && <img src={`http://localhost:4000/${cita.imagen}`} alt="Imagen adjunta a la cita" width="300" />}
               <span className="cita-estado">Estado de la cita: {cita.estado}</span>
             </li>
           ))}
@@ -212,13 +182,9 @@ const MisCitas = () => {
         <ul>
           {citasComoEspecialista.map((cita) => (
             <li key={cita.id} className="especialista-cita">
-              <span className="cita-fecha">
-                {formatDate(cita.fecha)} entre las {cita.hora} horas
-              </span>
+              <span className="cita-fecha">{formatDate(cita.fecha)} entre las {cita.hora} horas</span>
               <span className="cita-descripcion">{cita.descripcion}</span>
-              <span className="cita-especialista">
-                Especialista: {especialistas[cita.especialista_id] || 'Cargando...'}
-              </span>
+              <span className="cita-especialista">Especialista: {especialistas.find(e => e.id === cita.especialista_id)?.nombre || 'Cargando...'}</span>
               {cita.imagen ? (
                 <span style={{ paddingTop: '10px', paddingBottom: '10px' }}>
                   Imagen adjunta:{' '}
@@ -226,22 +192,10 @@ const MisCitas = () => {
               ) : (
                 <div style={{ paddingTop: '5px' }}></div>
               )}
-              <span className="cita-imagen">
-                {cita.imagen && (
-                  <img
-                    src={`http://localhost:4000/${cita.imagen}`}
-                    alt="Imagen adjunta a la cita"
-                    width="300"
-                  />
-                )}
-              </span>
-              <span className="cita-estado">Estado de la cita: {cita.estado}</span>
-              <button className="button" onClick={() => handleEditCita(cita)}>
-                Editar cita
-              </button>
-              <button className="button" onClick={() => handleCancelCita(cita.id)}>
-                Cancelar cita
-              </button>
+              {cita.imagen && <img src={`http://localhost:4000/${cita.imagen}`} alt="Imagen adjunta a la cita" width="300" />}
+              <span className="cita-estado" style={{paddingTop:"10px"}}>Estado de la cita: {cita.estado}</span>
+              <button className="button" onClick={() => handleEditCita(cita)}>Editar cita</button>
+              <button className="button" onClick={() => handleCancelCita(cita.id)}>Cancelar cita</button>
             </li>
           ))}
         </ul>
@@ -249,23 +203,22 @@ const MisCitas = () => {
         <p>No hay citas programadas como especialista.</p>
       )}
 
-      {/* Modal para edición de cita */}
       {showEditModal && (
         <Modal isOpen={showEditModal} onClose={() => setShowEditModal(false)}>
           <form className="formulario-modificacion-cita" onSubmit={handleFormSubmit}>
             <h2>Editar Cita</h2>
-            
-              <label>Rut Paciente:
-                <input
-                  type="text"
-                  name="rutPaciente"
-                  value={formValues.rutPaciente}
-                  onChange={handleInputChange}
-                  required
-                />
-              </label>
-            
-              <label>Fecha:
+
+            <label>Rut Paciente:
+              <input
+                type="text"
+                name="rutPaciente"
+                value={formValues.rutPaciente}
+                onChange={handleInputChange}
+                required
+              />
+            </label>
+
+            <label>Fecha:
               <input
                 type="date"
                 name="fecha"
@@ -273,10 +226,10 @@ const MisCitas = () => {
                 onChange={handleInputChange}
                 required
               />
-              </label>
-            
-            
-              <label>Hora:
+              <p style={{marginTop:"-12px", color:"gainsboro", fontSize:"15px"}}>Fecha original: {fechaOriginal}</p> {/* Mostrar la fecha original */}
+            </label>
+
+            <label>Hora:
               <input
                 type="text"
                 name="hora"
@@ -284,44 +237,45 @@ const MisCitas = () => {
                 onChange={handleInputChange}
                 required
               />
-              </label>
-            
-            
-              <label style={{display:"inline-flex", paddingInline:"auto"}}>Descripción:
+            </label>
+
+            <label>Descripción:
               <textarea
-                placeholder='Ingrese datos y/o observaciones de la cita.'
+                placeholder="Ingrese datos y/o observaciones de la cita."
                 name="descripcion"
                 value={formValues.descripcion}
                 onChange={handleInputChange}
                 required
               />
-              </label>
-            
-            
-              <label>Especialista ID:
-              <input
-                type="text"
+            </label>
+
+            <label style={{paddingBottom:"20px"}}>Especialista:
+              <select
                 name="especialista_id"
                 value={formValues.especialista_id}
                 onChange={handleInputChange}
                 required
-              />
-              </label>
-            
-              <label>Estado:
-              <select
+              >
+                <option value="" disabled>Seleccione un especialista</option>
+                {especialistas.map((especialista) => (
+                  <option key={especialista.id} value={especialista.id}>
+                    {especialista.nombre}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label>Estado:
+              <input
+                type="text"
                 name="estado"
                 value={formValues.estado}
                 onChange={handleInputChange}
                 required
-              >>
-                <option value="Confirmada">Realizada</option>
-                <option value="Paciente-no-asiste">Paciente no asiste</option>
-                <option value="Cancelada">Cancelada</option>
-              </select>
-              </label>
-            
-            <button type="submit">Guardar Cambios</button>
+              />
+            </label>
+
+            <button className="button" type="submit">Guardar cambios</button>
           </form>
         </Modal>
       )}

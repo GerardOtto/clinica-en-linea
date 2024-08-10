@@ -89,6 +89,7 @@
   background-color: rgb(16, 58, 57);
   margin-top: 10px;
   border-radius: 4px;
+  width: 100%;
 }
 
 /* Estilos para cada etiqueta del formulario */

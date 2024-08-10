@@ -66,9 +66,6 @@ const Profile = () => {
           <a href={`mailto:${especialista.correo}?subject=Consulta Cafan&body=Por favor ingrese su consulta y sus datos para que el especialista se ponga en contacto con usted.`}>
             <button className="footer-button">Enviar correo (Gmail)</button>
           </a>
-          <a href={`https://wa.me/${especialista.contacto}?text=Hola! Me gustaría solicitar información sobre su disponibilidad para una consulta`}>
-            <button className="footer-button">Consulta directa (Whatsapp)</button>
-          </a>
         </footer>
       </div>
     </>

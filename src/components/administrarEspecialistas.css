@@ -7,110 +7,158 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
   
-  .list-container h2 {
-    text-align: center;
-    margin-bottom: 20px;
-    color: #333;
-  }
-  
-  .styled-table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  
-  .styled-table thead tr {
-    color: #ffffff;
-    text-align: left;
-    font-weight: bold;
-  }
-  
-  .styled-table th,
-  .styled-table td {
-    padding: 12px 15px;
-    font-style: oblique;
-    color: #04251f;
-  }
-  
-  .styled-table tbody tr {
-    border-bottom: 1px solid #dddddd;
-  }
-  
-  .styled-table tbody tr:nth-of-type(even) {
-    background-color: #f3f3f3;
-  }
-  
-  .styled-table tbody tr:last-of-type {
-    border-bottom: 2px solid #009879;
-  }
-  
-  .styled-table tbody tr.active-row {
-    font-weight: bold;
-    color: #009879;
-  }
-  
-  .delete-button {
-    background-color: #e74c3c;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .delete-button:hover {
-    background-color: #c0392b;
-  }
-  
-  button {
-    background-color: rgb(46, 121, 109);
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 20px;
-  }
+.list-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333333;
+}
 
-  .custom-file-input {
-    position: relative;
-    overflow: hidden;
-    display: inline-block;
-  }
+.styled-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.styled-table thead tr {
+  color: #ffffff;
+  text-align: left;
+  font-weight: bold;
+}
+
+.styled-table th,
+.styled-table td {
+  padding: 12px 15px;
+  font-style: oblique;
+  color: #04251f;
+}
+
+.styled-table tbody tr {
+  border-bottom: 1px solid #dddddd;
+}
+
+.styled-table tbody tr:nth-of-type(even) {
+  background-color: #f3f3f3;
+}
+
+.styled-table tbody tr:last-of-type {
+  border-bottom: 2px solid #009879;
+}
+
+.styled-table tbody tr.active-row {
+  font-weight: bold;
+  color: #009879;
+}
+
+.delete-button {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.delete-button:hover {
+  background-color: #c0392b;
+}
+
+button {
+  background-color: rgb(46, 121, 109);
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 20px;
+  width: 100%;
+}
+
+.custom-file-input {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+}
+
+.custom-file-input input[type="file"] {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 0;
+  padding: 0;
+  font-size: 20px;
+  cursor: pointer;
+  opacity: 0;
+  filter: alpha(opacity=0);
+}
+
+.custom-file-input::before {
+  content: 'Subir imagen';
+  display: inline-block;
+  background: rgb(46, 121, 109);
+  border: 1px solid #ddd;
+  padding: 8px 12px;
+  outline: none;
+  white-space: nowrap;
+  user-select: none;
+  cursor: pointer;
+  color: white;
+  border-radius: 5px;
+  margin-right: 10px;
+}
+
+.custom-file-input:hover::before {
+  background: #5ab298;
+}
+
+.edit-form {
+  background-color: rgb(16, 58, 57);
+}
+.edit-form label{
+  color: rgb(245, 245, 245);
+  padding: 10px;
   
-  .custom-file-input input[type="file"] {
-    position: absolute;
-    top: 0;
-    right: 0;
-    margin: 0;
-    padding: 0;
-    font-size: 20px;
-    cursor: pointer;
-    opacity: 0;
-    filter: alpha(opacity=0);
-  }
-  
-  .custom-file-input::before {
-    content: 'Subir imagen';
-    display: inline-block;
-    background: rgb(46, 121, 109);
-    border: 1px solid #ddd;
-    padding: 8px 12px;
-    outline: none;
-    white-space: nowrap;
-    user-select: none;
-    cursor: pointer;
-    color: white;
-    border-radius: 5px;
-    margin-right: 10px;
-  }
-  
-  .custom-file-input:hover::before {
-    background: #5ab298;
-  }
-  
-  .edit-form label{
-    color: black;
-    padding: 10px;
-    
-  }
+}
+
+
+  /* Modal */
+.modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+  background-color: #fefefe;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 400px;
+  border-radius: 10px;
+  position: relative;
+}
+
+.close-button:hover,
+.close-button:focus {
+  color: rgb(0, 0, 0);
+}
+
+.close-button {
+  margin-bottom: 15px;
+}
+
+.edit-form h2{
+  color: white;
+}
+
+.edit-form input{
+  width: auto;
+  margin-left: 10px;
+}
+
