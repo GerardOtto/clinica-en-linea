@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './administrarCitas.css';
-import Modal from './modal2'; // Asegúrate de que la ruta al archivo sea correcta
 
 const VerCitas = ({ inSesion }) => {
   const [citas, setCitas] = useState([]);
@@ -15,9 +14,7 @@ const VerCitas = ({ inSesion }) => {
     especialista_id: '',
     estado: '',
   });
-  const [modalImage, setModalImage] = useState(null); // Estado para la imagen del modal
-  const [showEditModal, setShowEditModal] = useState(false);
-  const formRef = useRef(null); // Ref para el formulario
+  const [zoomedImg, setZoomedImg] = useState(null); // Estado para la imagen en zoom
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -74,7 +71,7 @@ const VerCitas = ({ inSesion }) => {
   const handleEditClick = (cita) => {
     setEditCita(cita);
     setFormValues(cita);
-    setShowEditModal(true);
+    document.getElementById('edit-form').style.display = 'block'; // Mostrar el formulario de edición
   };
 
   const handleInputChange = (e) => {
@@ -101,7 +98,7 @@ const VerCitas = ({ inSesion }) => {
       const updatedCita = await response.json();
       setCitas(citas.map(cita => (cita.id === updatedCita.id ? updatedCita : cita)));
       setEditCita(null);
-      setShowEditModal(false);
+      document.getElementById('edit-form').style.display = 'none'; // Ocultar el formulario de edición
       fetchCitas(); // Refrescar la lista de citas
     } catch (error) {
       console.error('Error al actualizar la cita:', error);
@@ -122,17 +119,56 @@ const VerCitas = ({ inSesion }) => {
     }
   };
 
-  const openModal = (imageUrl) => {
-    setModalImage(imageUrl);
+  // Función para eliminar todas las citas
+  const handleDeleteAll = async () => {
+    const confirmarPrimero = window.confirm('¿Está seguro de que desea eliminar todas las citas?');
+    if (!confirmarPrimero) return;
+
+    const confirmarSegundo = window.confirm('Esta acción es irreversible. ¿Está seguro?');
+    if (!confirmarSegundo) return;
+
+    try {
+      const response = await fetch('http://localhost:4000/eliminarTodasCitas', {
+        method: 'DELETE',
+      });
+      if (!response.ok) {
+        throw new Error('Error al eliminar todas las citas');
+      }
+      await fetchCitas(); // Refrescar la lista de citas después de eliminar
+    } catch (error) {
+      console.error('Error al eliminar todas las citas:', error);
+    }
   };
 
-  const closeModal = () => {
-    setModalImage(null);
+  // Función para generar el archivo TXT y descargarlo
+  const handleDownloadTxt = () => {
+    const headers = ['ID', 'Paciente', 'Fecha', 'Hora', 'Descripción', 'Especialista', 'Estado'];
+    const rows = citas.map(cita => [
+      cita.id,
+      cita.rutPaciente,
+      formatDate(cita.fecha),
+      cita.hora,
+      cita.descripcion,
+      getEspecialistaNombre(cita.especialista_id),
+      cita.estado
+    ]);
+
+    let txtContent = [headers, ...rows].map(e => e.join(",")).join("\n");
+
+    const blob = new Blob([txtContent], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", "citas.txt");
+    document.body.appendChild(link); // Required for FF
+    link.click();
+    URL.revokeObjectURL(url); // Clean up
   };
 
   return (
     <div className="ver-citas">
       <h2>Lista de todas las Citas</h2>
+      
       {citas.length === 0 ? (
         <p>No hay citas registradas.</p>
       ) : (
@@ -161,35 +197,30 @@ const VerCitas = ({ inSesion }) => {
                 <td>{getEspecialistaNombre(cita.especialista_id)}</td>
                 <td>
                   {cita.imagen && (
-                    <div>
-                      <img
-                        src={`http://localhost:4000/${cita.imagen}`}
-                        alt="Imagen de la cita"
-                        style={{ width: '100px', cursor: 'pointer' }}
-                        onClick={() => openModal(`http://localhost:4000/${cita.imagen}`)}
-                      />
-                    </div>
+                    <img
+                      src={`http://localhost:4000/${cita.imagen}`}
+                      alt="Imagen"
+                      width="100"
+                      className="zoom-img"
+                      onClick={() => setZoomedImg(`http://localhost:4000/${cita.imagen}`)}
+                    />
                   )}
                 </td>
                 <td>{cita.estado}</td>
                 <td>
-                  <button onClick={() => handleEditClick(cita)}>Modificar cita</button>
-                  <button 
-                    onClick={() => eliminarCita(cita.id)}
-                    className="delete-button"
-                  >
-                    Eliminar
-                  </button>
+                  <button onClick={() => handleEditClick(cita)} className="edit-button">Modificar</button>
+                  <button onClick={() => eliminarCita(cita.id)} className="delete-button">Eliminar</button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       )}
-      {showEditModal && (
-        <Modal onClose={() => setShowEditModal(false)}>
-          <form className="editar-cita-form" onSubmit={handleFormSubmit}>
-            <h2>Editar Cita</h2>
+
+      {editCita && (
+        <div id="edit-form" className="edit-form" style={{ display: 'none' }}>
+          <h2>Modificar Cita</h2>
+          <form onSubmit={handleFormSubmit}>
             <label>
               Paciente:
               <input type="text" name="rutPaciente" value={formValues.rutPaciente} onChange={handleInputChange} />
@@ -225,18 +256,22 @@ const VerCitas = ({ inSesion }) => {
                 <option value="cancelada">Cancelada</option>
               </select>
             </label>
-            
             <button type="submit">Guardar cambios</button>
           </form>
-        </Modal>
+        </div>
       )}
-      {modalImage && (
-        <Modal onClose={closeModal}>
-          <img src={modalImage} alt="Imagen ampliada" style={{ maxWidth: '100%', maxHeight: '80vh' }} />
-        </Modal>
+
+      {zoomedImg && (
+        <div className="zoom-container">
+          <img src={zoomedImg} alt="Imagen ampliada" className="zoom-img-large" onClick={() => setZoomedImg(null)} />
+        </div>
       )}
-    </div>
-  );
+
+      <button onClick={handleDownloadTxt} className="download-button">Presione aquí para descargar todas las citas</button>
+      <button onClick={handleDeleteAll} className="delete-all-button">Eliminar Todas las Citas</button>
+      <center style={{color:"darkRed"}}>Recuerde descargar todos los registros antes de eliminar los datos, pues esta acción es irreversible.</center>
+    </div>  
+);
 };
 
 export default VerCitas;

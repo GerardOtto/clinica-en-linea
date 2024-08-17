@@ -135,4 +135,43 @@
   margin-top: 20px;
 }
 
-  
+/* Estilos para la imagen pequeña con efecto de zoom */
+.zoom-img {
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.zoom-img:hover {
+  transform: scale(2.0); /* Ajusta el nivel de zoom */
+}
+
+/* Estilos para la imagen ampliada */
+.zoom-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.zoom-img-large {
+  max-width: 90%;
+  max-height: 90%;
+  cursor: pointer;
+}
+
+.delete-all-button {
+  background-color: red;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+

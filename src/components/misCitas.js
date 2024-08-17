@@ -18,11 +18,18 @@ const MisCitas = () => {
   });
   const [fechaOriginal, setFechaOriginal] = useState(''); // Nuevo estado para la fecha original
   const [showEditModal, setShowEditModal] = useState(false);
+  const [zoomedImage, setZoomedImage] = useState(null); // Estado para manejar el zoom de la imagen
+  const [isEspecialista, setIsEspecialista] = useState(false); // Estado para manejar el token 'esEspecialista'
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchCitas();
     fetchEspecialistas(); // Obtener la lista de especialistas
+  }, []);
+
+  useEffect(() => {
+    const tokenEspecialista = localStorage.getItem('esEspecialista');
+    setIsEspecialista(!!tokenEspecialista); // Verificar si el token 'esEspecialista' está activo
   }, []);
 
   const fetchEspecialistas = async () => {
@@ -149,27 +156,42 @@ const MisCitas = () => {
     }
   };
 
+  const handleZoom = (imagen) => {
+    setZoomedImage(imagen);
+  };
+
+  const handleCloseZoom = () => {
+    setZoomedImage(null);
+  };
+
   return (
     <div className="mis-citas">
       <h2>Mis Citas</h2>
 
-      <h3>Citas como Paciente</h3>
       {citasComoPaciente.length > 0 ? (
         <ul>
           {citasComoPaciente.map((cita) => (
             <li key={cita.id}>
               <span className="cita-fecha">{formatDate(cita.fecha)} entre las {cita.hora} horas</span>
-              <span className="cita-descripcion">{cita.descripcion}</span>
+              <span className="cita-descripcion">Descripción: {cita.descripcion}</span>
               <span className="cita-especialista">Especialista: {especialistas.find(e => e.id === cita.especialista_id)?.nombre || 'Cargando...'}</span>
               {cita.imagen ? (
                 <span style={{ paddingTop: '10px', paddingBottom: '10px' }}>
-                  Imagen adjunta:{' '}
+                  Imagen adjunta (Click para hacer zoom):{' '}
                 </span>
               ) : (
                 <div style={{ paddingTop: '5px' }}></div>
               )}
-              {cita.imagen && <img src={`http://localhost:4000/${cita.imagen}`} alt="Imagen adjunta a la cita" width="300" />}
-              <span className="cita-estado">Estado de la cita: {cita.estado}</span>
+              {cita.imagen && (
+                <img
+                  src={`http://localhost:4000/${cita.imagen}`}
+                  alt="Imagen adjunta a la cita"
+                  width="300"
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => handleZoom(cita.imagen)}
+                />
+              )}
+              <span className="cita-estado" style={{marginTop:"8px"}}>Estado de la cita: {cita.estado}</span>
             </li>
           ))}
         </ul>
@@ -177,30 +199,42 @@ const MisCitas = () => {
         <p>No hay citas programadas como paciente.</p>
       )}
 
-      <h3>Citas como Especialista</h3>
-      {citasComoEspecialista.length > 0 ? (
-        <ul>
-          {citasComoEspecialista.map((cita) => (
-            <li key={cita.id} className="especialista-cita">
-              <span className="cita-fecha">{formatDate(cita.fecha)} entre las {cita.hora} horas</span>
-              <span className="cita-descripcion">{cita.descripcion}</span>
-              <span className="cita-especialista">Especialista: {especialistas.find(e => e.id === cita.especialista_id)?.nombre || 'Cargando...'}</span>
-              {cita.imagen ? (
-                <span style={{ paddingTop: '10px', paddingBottom: '10px' }}>
-                  Imagen adjunta:{' '}
-                </span>
-              ) : (
-                <div style={{ paddingTop: '5px' }}></div>
-              )}
-              {cita.imagen && <img src={`http://localhost:4000/${cita.imagen}`} alt="Imagen adjunta a la cita" width="300" />}
-              <span className="cita-estado" style={{paddingTop:"10px"}}>Estado de la cita: {cita.estado}</span>
-              <button className="button" onClick={() => handleEditCita(cita)}>Editar cita</button>
-              <button className="button" onClick={() => handleCancelCita(cita.id)}>Cancelar cita</button>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>No hay citas programadas como especialista.</p>
+      {isEspecialista && (
+        <>
+          <h3>Citas como Especialista</h3>
+          {citasComoEspecialista.length > 0 ? (
+            <ul>
+              {citasComoEspecialista.map((cita) => (
+                <li key={cita.id} className="especialista-cita">
+                  <span className="cita-fecha">{formatDate(cita.fecha)} entre las {cita.hora} horas</span>
+                  <span className="cita-descripcion">Descripción: {cita.descripcion}</span>
+                  <span className="cita-especialista">Especialista: {especialistas.find(e => e.id === cita.especialista_id)?.nombre || 'Cargando...'}</span>
+                  {cita.imagen ? (
+                    <span style={{ paddingTop: '10px', paddingBottom: '10px' }}>
+                      Imagen adjunta:{' '}
+                    </span>
+                  ) : (
+                    <div style={{ paddingTop: '5px' }}></div>
+                  )}
+                  {cita.imagen && (
+                    <img
+                      src={`http://localhost:4000/${cita.imagen}`}
+                      alt="Imagen adjunta a la cita"
+                      width="300"
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => handleZoom(cita.imagen)}
+                    />
+                  )}
+                  <span className="cita-estado" style={{paddingTop:"10px"}}>Estado de la cita: {cita.estado}</span>
+                  <button className="button" onClick={() => handleEditCita(cita)}>Editar cita</button>
+                  <button className="button" onClick={() => handleCancelCita(cita.id)}>Cancelar cita</button>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>No hay citas programadas como especialista.</p>
+          )}
+        </>
       )}
 
       {showEditModal && (
@@ -218,6 +252,7 @@ const MisCitas = () => {
               />
             </label>
 
+            <p style={{color:"gainsboro", fontSize:"15px", marginTop:"-5px"}}>Fecha original: {fechaOriginal}</p> {/* Mostrar la fecha original */}
             <label>Fecha:
               <input
                 type="date"
@@ -225,8 +260,8 @@ const MisCitas = () => {
                 value={formValues.fecha}
                 onChange={handleInputChange}
                 required
+                style={{marginBottom:"25px"}}
               />
-              <p style={{marginTop:"-12px", color:"gainsboro", fontSize:"15px"}}>Fecha original: {fechaOriginal}</p> {/* Mostrar la fecha original */}
             </label>
 
             <label>Hora:
@@ -245,7 +280,6 @@ const MisCitas = () => {
                 name="descripcion"
                 value={formValues.descripcion}
                 onChange={handleInputChange}
-                required
               />
             </label>
 
@@ -255,6 +289,7 @@ const MisCitas = () => {
                 value={formValues.especialista_id}
                 onChange={handleInputChange}
                 required
+                style={{marginLeft:"8px",height:"26px"}}
               >
                 <option value="" disabled>Seleccione un especialista</option>
                 {especialistas.map((especialista) => (
@@ -266,18 +301,35 @@ const MisCitas = () => {
             </label>
 
             <label>Estado:
-              <input
-                type="text"
+              <select
                 name="estado"
                 value={formValues.estado}
                 onChange={handleInputChange}
                 required
-              />
+                style={{marginLeft:"8px", height:"26px"}}
+              >
+                <option value="" disabled>Seleccione un estado</option>
+                <option value="Pendiente">Pendiente</option>
+                <option value="Aprobada">Aprobada</option>
+                <option value="Rechazada">Rechazada</option>
+                <option value="Anulada por paciente">Anulada por paciente</option>
+                <option value="Paciente no asiste">Paciente no asiste</option>
+                <option value="Aplazada">Aplazada</option>
+              </select>
             </label>
 
-            <button className="button" type="submit">Guardar cambios</button>
+            <button type="submit">Guardar Cambios</button>
+            <button type="button" onClick={() => setShowEditModal(false)}>Cancelar</button>
           </form>
         </Modal>
+      )}
+
+      {zoomedImage && (
+        <div className="zoomed-image-overlay" onClick={handleCloseZoom}>
+          <div className="zoomed-image-container">
+            <img src={`http://localhost:4000/${zoomedImage}`} alt="Zoomed Imagen" className="zoomed-image" />
+          </div>
+        </div>
       )}
     </div>
   );

@@ -381,6 +381,33 @@ app.post('/agendarCita', upload.single('imagen'), (req, res) => {
   connection.end();
 });
 
+app.delete('/cancelarCita/:id', (req, res) => {
+  const { id } = req.params;
+  const connection = mysql.createConnection(credentials);
+
+  connection.query(
+    'DELETE FROM cita WHERE id = ?',
+    [id],
+    (error, results) => {
+      if (error) {
+        console.error('Error al cancelar la cita:', error);
+        res.status(500).send('Error al cancelar la cita');
+      } else {
+        if (results.affectedRows === 0) {
+          res.status(404).send('Cita no encontrada');
+        } else {
+          res.status(200).json({
+            status: 'success',
+            message: 'Cita cancelada correctamente',
+          });
+        }
+      }
+      connection.end(); // Asegurarse de cerrar la conexión
+    }
+  );
+});
+
+
 
 app.get('/misCitas', (req, res) => {
   const connection = mysql.createConnection(credentials);
@@ -472,6 +499,51 @@ app.delete('/eliminarCita/:id', (req, res) => {
     }
   );
 });
+
+// Ruta para eliminar todas las citas
+app.delete('/eliminarTodasCitas', (req, res) => {
+  const connection = mysql.createConnection(credentials);
+
+  // Primero, obtener las imágenes asociadas con las citas
+  connection.query(
+    'SELECT imagen FROM cita',
+    (error, results) => {
+      if (error) {
+        console.error('Error al obtener las imágenes de las citas:', error);
+        res.status(500).send('Error al obtener las imágenes de las citas');
+        connection.end();
+        return;
+      }
+
+      // Eliminar todas las citas
+      connection.query(
+        'DELETE FROM cita',
+        (error, results) => {
+          if (error) {
+            console.error('Error al eliminar las citas:', error);
+            res.status(500).send('Error al eliminar las citas');
+          } else {
+            // Eliminar las imágenes del servidor
+            results.forEach((row) => {
+              const imagePath = row.imagen;
+              if (imagePath) {
+                fs.unlink(path.join(__dirname, imagePath), (err) => {
+                  if (err) console.error('Error al eliminar la imagen de la cita:', err);
+                });
+              }
+            });
+            res.status(200).json({
+              status: 'success',
+              message: 'Todas las citas eliminadas correctamente',
+            });
+          }
+          connection.end();
+        }
+      );
+    }
+  );
+});
+
 
 
 app.listen(4000, () => console.log('Hola, soy el servidor'));

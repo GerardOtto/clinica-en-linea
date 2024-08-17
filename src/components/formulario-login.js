@@ -76,8 +76,9 @@ const Formulario = ({ onClose }) => {
             console.log('Usuario es especialista, ID:', especialistaData.idEspecialista);
             alert('Bienvenido especialista!');
           }
-
+          navigate('/misCitas');
           window.location.reload();
+          
           onClose(); // Cerrar el modal después del inicio de sesión exitoso
         } else {
           alert('Los datos de inicio de sesión no coinciden');

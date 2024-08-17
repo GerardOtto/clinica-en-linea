@@ -145,31 +145,40 @@ body.popup-active {
   overflow: hidden;
 }
 
-/* Header.css */
+/* Estilos para el contenedor de búsqueda */
 .search-container {
   position: relative;
 }
 
+/* Estilos para el dropdown de resultados de búsqueda */
 .search-dropdown {
   position: absolute;
-  top: 100%;
+  top: 100%; /* Coloca el dropdown justo debajo del input */
   left: 0;
-  right: 0;
-  background-color: rgb(0, 0, 0);
-  border: 1px solid #ccc;
-  max-height: 200px;
-  overflow-y: auto;
-  z-index: 1000;
+  width: 100%;
+  background-color: white; /* Fondo blanco */
+  color: rgb(0, 0, 0); /* Texto negro */
+  border: 1px solid #ccc; /* Borde gris claro */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* Sombra sutil */
+  max-height: 200px; /* Altura máxima del dropdown */
+  overflow-y: auto; /* Desplazamiento vertical si hay demasiados resultados */
+  z-index: 1000; /* Asegura que el dropdown esté encima de otros elementos */
+  list-style-type: none; /* Elimina los puntos de lista */
   padding: 0;
-  list-style: none;
   margin: 0;
 }
 
+/* Estilos para cada item de búsqueda */
 .search-item {
-  padding: 8px 12px;
-  cursor: pointer;
+  padding: 8px 12px; /* Espaciado interno */
+  cursor: pointer; /* Cambia el cursor al pasar sobre el item */
 }
 
+/* Estilos para el item al pasar el mouse sobre él */
 .search-item:hover {
-  background-color: #f0f0f0;
+  background-color: #f0f0f0; /* Color de fondo al pasar el mouse */
 }
+
+
+
+

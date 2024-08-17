@@ -1,4 +1,3 @@
-// Header.js
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './Header.css';
@@ -47,13 +46,11 @@ const Header = ({ inSesion, isAdmin }) => {
     }
   };
 
-  // Función para manejar el cambio en el input de búsqueda
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
-    handleSearch(event.target.value); // Realizar la búsqueda cuando cambia el input
+    handleSearch(event.target.value);
   };
 
-  // Función para manejar la búsqueda
   const handleSearch = async (term) => {
     if (term.length > 1) {
       try {
@@ -100,6 +97,7 @@ const Header = ({ inSesion, isAdmin }) => {
         </ul>
         <div className="search-container">
           <input
+            style={{width:"240px"}}
             type="text"
             placeholder="Buscar especialista/especialidad"
             className="search-input"
@@ -110,7 +108,9 @@ const Header = ({ inSesion, isAdmin }) => {
             <ul className="search-dropdown">
               {searchResults.map((result) => (
                 <li key={result.id} className="search-item">
-                  {result.nombre} - {result.especialidad}
+                  <Link to={`/perfilPro/${result.id}`}>
+                    {result.nombre} - {result.especialidad}
+                  </Link>
                 </li>
               ))}
             </ul>
