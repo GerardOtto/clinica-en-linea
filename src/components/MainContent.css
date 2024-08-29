@@ -1,47 +1,97 @@
+/* Estilos generales para pantallas grandes (escritorio) */
 .main-content {
-    display: grid;
+  display: grid;
+  grid-template-areas:
+    "left-sidebar main-section right-sidebar"
+    "footer-section footer-section footer-section";
+  grid-template-columns: 1fr 2fr 1fr;
+  gap: 20px;
+  padding: 20px;
+}
+
+.left-sidebar {
+  grid-area: left-sidebar;
+  background-color: rgb(36, 160, 136);
+  padding: 10px;
+}
+
+.main-section {
+  grid-area: main-section;
+}
+
+.image-section {
+  background-color: rgb(36, 160, 136);
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.text-section {
+  background-color: rgb(36, 160, 136);
+  padding: 20px;
+}
+
+.right-sidebar {
+  grid-area: right-sidebar;
+  background-color: rgb(36, 160, 136);
+  padding: 10px;
+}
+
+.footer-section {
+  grid-area: footer-section;
+  background-color: rgb(36, 160, 136);
+  padding: 10px;
+  text-align: center;
+}
+
+/* Estilos para pantallas más pequeñas (móviles) */
+@media only screen and (max-width: 768px) {
+  .main-content {
     grid-template-areas:
-      "left-sidebar main-section right-sidebar"
-      "footer-section footer-section footer-section";
-    grid-template-columns: 1fr 2fr 1fr;
-    gap: 20px;
-    padding: 20px;
+      "main-section"
+      "left-sidebar"
+      "right-sidebar"
+      "footer-section";
+    grid-template-columns: 1fr;
   }
-  
-  .left-sidebar {
-    grid-area: left-sidebar;
-    background-color: rgb(36, 160, 136);
-    padding: 10px;
-  }
-  
-  .main-section {
-    grid-area: main-section;
-  }
-  
-  .image-section {
-    background-color: rgb(36, 160, 136);
-    height: 300px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 20px;
-  }
-  
-  .text-section {
-    background-color: rgb(36, 160, 136);
-    padding: 20px;
-  }
-  
+
+  .left-sidebar,
   .right-sidebar {
-    grid-area: right-sidebar;
-    background-color: rgb(36, 160, 136);
     padding: 10px;
+    background-color: rgb(36, 160, 136);
   }
-  
+
+  .image-section {
+    height: auto; /* Ajusta la altura para pantallas pequeñas */
+    margin-bottom: 10px;
+  }
+
+  .text-section {
+    padding: 15px;
+  }
+
   .footer-section {
-    grid-area: footer-section;
-    background-color: rgb(36, 160, 136);
-    padding: 10px;
-    text-align: center;
+    padding: 15px;
   }
-  
+}
+
+/* Estilos para pantallas muy pequeñas (dispositivos móviles) */
+@media only screen and (max-width: 480px) {
+  .main-content {
+    padding: 10px;
+  }
+
+  .image-section {
+    height: auto; /* Asegúrate de que la imagen se ajuste en pantallas muy pequeñas */
+  }
+
+  .text-section {
+    padding: 10px;
+  }
+
+  .footer-section {
+    padding: 10px;
+  }
+}

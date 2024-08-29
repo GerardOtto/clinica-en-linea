@@ -109,6 +109,7 @@
   background-color: #fff; /* Fondo blanco en los campos */
   color: #333; /* Color del texto en los campos */
   margin-left: 10px;
+  
 }
 
 /* Estilos para los botones del formulario */
@@ -175,3 +176,31 @@
   margin-bottom: 10px;
 }
 
+.formulario-modificacion-cita {
+  width: 90%;
+  padding: 20px;
+  background-color: rgb(16, 58, 57);
+  border-radius: 5px;
+  margin-top: 5px;
+  display: inline-flex;
+  flex-direction: column;
+}
+
+.formulario-modificacion-cita h2,
+.formulario-modificacion-cita label{
+  color: rgb(255, 255, 255);
+}
+
+.formulario-modificacion-cita input{
+  width: 200px;
+  margin-left: 20px;
+  margin-bottom: 20px;
+}
+
+.formulario-modificacion-cita textarea{
+  margin-left: 20px;
+  margin-bottom: 20px;
+  width: 300px;
+  height: 100px;
+  font-size: 15px;
+}

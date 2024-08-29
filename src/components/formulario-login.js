@@ -38,6 +38,7 @@ const Formulario = ({ onClose }) => {
       setErrors(errors);
     } else {
       try {
+        // Enviar solicitud al backend para verificar login
         const response = await fetch('http://localhost:4000/verificar-login', {
           method: 'POST',
           headers: {
@@ -49,14 +50,15 @@ const Formulario = ({ onClose }) => {
         const data = await response.json();
 
         if (data.success) {
-          if (rutPaciente === '20969557k' && contrasena === '$20969557Kk') {
+          if (data.isAdmin) {
             const token = 'your-token'; 
             localStorage.setItem('token', token);
             alert('Inicio de sesión exitoso como ADMIN!');
+          } else {
+            alert('Inicio de sesión exitoso!');
           }
-          
-          alert('Inicio de sesión exitoso!');
-          const sesion = data.rutPaciente;
+
+          const sesion = rutPaciente;
           localStorage.setItem('token-sesion', sesion);
           console.log('Token de sesión:', sesion);
 
@@ -76,15 +78,16 @@ const Formulario = ({ onClose }) => {
             console.log('Usuario es especialista, ID:', especialistaData.idEspecialista);
             alert('Bienvenido especialista!');
           }
+
           navigate('/misCitas');
           window.location.reload();
-          
+
           onClose(); // Cerrar el modal después del inicio de sesión exitoso
         } else {
           alert('Los datos de inicio de sesión no coinciden');
         }
       } catch (error) {
-        console.error(error);
+        console.error('Error durante la solicitud de inicio de sesión:', error);
         alert('Ocurrió un error al comunicarse con el servidor');
       }
     }

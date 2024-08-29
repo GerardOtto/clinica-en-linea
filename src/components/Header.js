@@ -9,6 +9,7 @@ const Header = ({ inSesion, isAdmin }) => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
+  const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -65,6 +66,10 @@ const Header = ({ inSesion, isAdmin }) => {
     }
   };
 
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen);
+  };
+
   return (
     <header className="header">
       <div className="logo">
@@ -97,7 +102,6 @@ const Header = ({ inSesion, isAdmin }) => {
         </ul>
         <div className="search-container">
           <input
-            style={{width:"240px"}}
             type="text"
             placeholder="Buscar especialista/especialidad"
             className="search-input"

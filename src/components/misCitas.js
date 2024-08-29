@@ -10,6 +10,7 @@ const MisCitas = () => {
   const [editCita, setEditCita] = useState(null);
   const [formValues, setFormValues] = useState({
     rutPaciente: '',
+    nombrePaciente: '',
     fecha: '',
     hora: '',
     descripcion: '',
@@ -207,6 +208,7 @@ const MisCitas = () => {
               {citasComoEspecialista.map((cita) => (
                 <li key={cita.id} className="especialista-cita">
                   <span className="cita-fecha">{formatDate(cita.fecha)} entre las {cita.hora} horas</span>
+                  <span className="cita-paciente" style={{marginBottom:"5px"}}>Nombre del paciente: {cita.nombrePaciente}</span>
                   <span className="cita-descripcion">Descripción: {cita.descripcion}</span>
                   <span className="cita-especialista">Especialista: {especialistas.find(e => e.id === cita.especialista_id)?.nombre || 'Cargando...'}</span>
                   {cita.imagen ? (
@@ -225,7 +227,7 @@ const MisCitas = () => {
                       onClick={() => handleZoom(cita.imagen)}
                     />
                   )}
-                  <span className="cita-estado" style={{paddingTop:"10px"}}>Estado de la cita: {cita.estado}</span>
+                  <span className="cita-estado">Estado de la cita: {cita.estado}</span>
                   <button className="button" onClick={() => handleEditCita(cita)}>Editar cita</button>
                   <button className="button" onClick={() => handleCancelCita(cita.id)}>Cancelar cita</button>
                 </li>
@@ -289,7 +291,7 @@ const MisCitas = () => {
                 value={formValues.especialista_id}
                 onChange={handleInputChange}
                 required
-                style={{marginLeft:"8px",height:"26px"}}
+                style={{marginLeft:"8px",height:"auto"}}
               >
                 <option value="" disabled>Seleccione un especialista</option>
                 {especialistas.map((especialista) => (
@@ -306,7 +308,7 @@ const MisCitas = () => {
                 value={formValues.estado}
                 onChange={handleInputChange}
                 required
-                style={{marginLeft:"8px", height:"26px"}}
+                style={{marginLeft:"8px", height:"auto"}}
               >
                 <option value="" disabled>Seleccione un estado</option>
                 <option value="Pendiente">Pendiente</option>

@@ -127,7 +127,11 @@ const AgendarCita = () => {
             <select
               id="especialista"
               value={especialista}
-              onChange={(e) => setEspecialista(e.target.value)}
+              onChange={(e) => {
+                setEspecialista(e.target.value);
+                const selectedEspecialista = especialistas.find(esp => esp.id === e.target.value);
+                setEspecialistaSeleccionado(selectedEspecialista);
+              }}
             >
               <option value="">Seleccione...</option>
               {especialistas.map((esp) => (
@@ -137,6 +141,24 @@ const AgendarCita = () => {
               ))}
             </select>
             {errors.especialista && <span className="error-message">{errors.especialista}</span>}
+            {especialistaSeleccionado && (
+        <div className="especialista-movil">
+          <div className="image-container">
+            {especialistaSeleccionado.imagen ? (
+              <img
+                src={`http://localhost:4000/${especialistaSeleccionado.imagen}`}
+                alt="Imagen del profesional"
+                className="profile-image-small"
+              />
+            ) : (
+              'Imagen del profesional'
+            )}
+          </div>
+          <div className="professional-info-small">
+            <p>Especialidad: {especialistaSeleccionado.especialidad}</p>
+          </div>
+        </div>
+      )}
           </div>
           <div className="form-group">
             <label htmlFor="fecha">Seleccione una fecha:</label>
@@ -190,27 +212,7 @@ const AgendarCita = () => {
           <button type="submit">Solicitar cita</button>
         </form>
       </div>
-      {especialistaSeleccionado && (
-        <div className="professional-card2">
-          <div className="image-container">
-            {especialistaSeleccionado.imagen ? (
-              <img
-                src={`http://localhost:4000/${especialistaSeleccionado.imagen}`}
-                alt="Imagen del profesional"
-                className="profile-image"
-              />
-            ) : (
-              'Imagen del profesional'
-            )}
-          </div>
-          <div className="professional-info">
-            <h2>{especialistaSeleccionado.nombre}</h2>
-            <p>Contacto: {especialistaSeleccionado.contacto}</p>
-            <p>Especialidad: {especialistaSeleccionado.especialidad}</p>
-            <p>Horario de Atención: {especialistaSeleccionado.horarioAtencion}</p>
-          </div>
-        </div>
-      )}
+      
     </div>
   );
 };

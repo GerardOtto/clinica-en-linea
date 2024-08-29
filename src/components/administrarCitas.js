@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './administrarCitas.css';
+import Modal from './modal2'; // Importar el componente Modal
+
 
 const VerCitas = ({ inSesion }) => {
   const [citas, setCitas] = useState([]);
@@ -14,7 +16,8 @@ const VerCitas = ({ inSesion }) => {
     especialista_id: '',
     estado: '',
   });
-  const [zoomedImg, setZoomedImg] = useState(null); // Estado para la imagen en zoom
+  const [zoomedImg, setZoomedImg] = useState(null);
+  const [showEditModal, setShowEditModal] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -71,7 +74,7 @@ const VerCitas = ({ inSesion }) => {
   const handleEditClick = (cita) => {
     setEditCita(cita);
     setFormValues(cita);
-    document.getElementById('edit-form').style.display = 'block'; // Mostrar el formulario de edición
+    setShowEditModal(true); // Mostrar el modal de edición
   };
 
   const handleInputChange = (e) => {
@@ -98,7 +101,7 @@ const VerCitas = ({ inSesion }) => {
       const updatedCita = await response.json();
       setCitas(citas.map(cita => (cita.id === updatedCita.id ? updatedCita : cita)));
       setEditCita(null);
-      document.getElementById('edit-form').style.display = 'none'; // Ocultar el formulario de edición
+      setShowEditModal(false); // Ocultar el modal de edición
       fetchCitas(); // Refrescar la lista de citas
     } catch (error) {
       console.error('Error al actualizar la cita:', error);
@@ -140,9 +143,9 @@ const VerCitas = ({ inSesion }) => {
     }
   };
 
-  // Función para generar el archivo TXT y descargarlo
-  const handleDownloadTxt = () => {
-    const headers = ['ID', 'Paciente', 'Fecha', 'Hora', 'Descripción', 'Especialista', 'Estado'];
+  // Función para generar el archivo CSV y descargarlo
+  const handleDownloadCsv = () => {
+    const headers = ['ID', 'Rut paciente', 'Fecha', 'Hora', 'Descripción', 'Especialista', 'Estado'];
     const rows = citas.map(cita => [
       cita.id,
       cita.rutPaciente,
@@ -153,16 +156,21 @@ const VerCitas = ({ inSesion }) => {
       cita.estado
     ]);
 
-    let txtContent = [headers, ...rows].map(e => e.join(",")).join("\n");
+    // Convertir los datos a formato CSV, usando comas como separador
+    let csvContent = [headers, ...rows].map(e => e.join(";")).join("\n");
 
-    const blob = new Blob([txtContent], { type: 'text/plain;charset=utf-8' });
+    // Agregar un BOM (Byte Order Mark) para que Excel detecte la codificación UTF-8 correctamente
+    csvContent = "\uFEFF" + csvContent;
+
+    // Crear el Blob y descargar el archivo
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.setAttribute("href", url);
-    link.setAttribute("download", "citas.txt");
+    link.setAttribute("download", "citas.csv");
     document.body.appendChild(link); // Required for FF
     link.click();
-    URL.revokeObjectURL(url); // Clean up
+    URL.revokeObjectURL(url); // Limpiar
   };
 
   return (
@@ -176,12 +184,13 @@ const VerCitas = ({ inSesion }) => {
           <thead>
             <tr>
               <th>ID</th>
+              <th>Rut paciente</th>
               <th>Paciente</th>
               <th>Fecha</th>
               <th>Hora</th>
               <th>Descripción</th>
               <th>Especialista</th>
-              <th>Imagen <br></br> (Presione para ampliar)</th>
+              <th>Imagen <br /> (Presione para ampliar)</th>
               <th>Estado</th>
               <th>Acciones</th>
             </tr>
@@ -191,6 +200,7 @@ const VerCitas = ({ inSesion }) => {
               <tr key={cita.id}>
                 <td>{cita.id}</td>
                 <td>{cita.rutPaciente}</td>
+                <td>{cita.nombrePaciente}</td>
                 <td>{formatDate(cita.fecha)}</td>
                 <td>{cita.hora}</td>
                 <td>{cita.descripcion}</td>
@@ -217,29 +227,61 @@ const VerCitas = ({ inSesion }) => {
         </table>
       )}
 
-      {editCita && (
-        <div id="edit-form" className="edit-form" style={{ display: 'none' }}>
-          <h2>Modificar Cita</h2>
-          <form onSubmit={handleFormSubmit}>
-            <label>
-              Paciente:
-              <input type="text" name="rutPaciente" value={formValues.rutPaciente} onChange={handleInputChange} />
+      {showEditModal && (
+        <Modal isOpen={showEditModal} onClose={() => setShowEditModal(false)}>
+          <form className="formulario-modificacion-cita" onSubmit={handleFormSubmit}>
+            <h2>Editar Cita</h2>
+
+            <label>Rut Paciente:
+              <input
+                type="text"
+                name="rutPaciente"
+                value={formValues.rutPaciente}
+                onChange={handleInputChange}
+                required
+              />
             </label>
-            <label>
-              Fecha:
-              <input type="date" name="fecha" value={formValues.fecha} onChange={handleInputChange} />
+
+            <p style={{ color: "gainsboro", fontSize: "15px", marginTop: "-5px" }}>Fecha original: {editCita ? formatDate(editCita.fecha) : ''}</p>
+            <label>Fecha:
+              <input
+                type="date"
+                name="fecha"
+                value={formValues.fecha}
+                onChange={handleInputChange}
+                required
+                style={{ marginBottom: "25px" }}
+              />
             </label>
-            <label>
-              Hora:
-              <input type="text" name="hora" value={formValues.hora} onChange={handleInputChange} placeholder="Ingrese la hora" />
+
+            <label>Hora:
+              <input
+                type="text"
+                name="hora"
+                value={formValues.hora}
+                onChange={handleInputChange}
+                required
+              />
             </label>
-            <label>
-              Descripción:
-              <input type="text" name="descripcion" value={formValues.descripcion} onChange={handleInputChange} />
+
+            <label>Descripción:
+              <textarea
+                placeholder="Ingrese datos y/o observaciones de la cita."
+                name="descripcion"
+                value={formValues.descripcion}
+                onChange={handleInputChange}
+              />
             </label>
-            <label>
-              Especialista:
-              <select name="especialista_id" value={formValues.especialista_id} onChange={handleInputChange}>
+
+            <label style={{ paddingBottom: "20px" }}>Especialista:
+              <select
+                name="especialista_id"
+                value={formValues.especialista_id}
+                onChange={handleInputChange}
+                required
+                style={{ marginLeft: "8px", height: "auto" }}
+              >
+                <option value="" disabled>Seleccione un especialista</option>
                 {especialistas.map((especialista) => (
                   <option key={especialista.id} value={especialista.id}>
                     {especialista.nombre}
@@ -247,18 +289,29 @@ const VerCitas = ({ inSesion }) => {
                 ))}
               </select>
             </label>
-            <label>
-              Estado:
-              <select name="estado" value={formValues.estado} onChange={handleInputChange}>
-                <option value="pendiente">Pendiente</option>
-                <option value="realizada">Realizada</option>
-                <option value="pacienteNoAsiste">Paciente no asiste</option>
-                <option value="cancelada">Cancelada</option>
+
+            <label>Estado:
+              <select
+                name="estado"
+                value={formValues.estado}
+                onChange={handleInputChange}
+                required
+                style={{ marginLeft: "8px", height: "auto" }}
+              >
+                <option value="" disabled>Seleccione un estado</option>
+                <option value="Pendiente">Pendiente</option>
+                <option value="Aprobada">Aprobada</option>
+                <option value="Rechazada">Rechazada</option>
+                <option value="Anulada por paciente">Anulada por paciente</option>
+                <option value="Paciente no asiste">Paciente no asiste</option>
+                <option value="Aplazada">Aplazada</option>
               </select>
             </label>
-            <button type="submit">Guardar cambios</button>
+
+            <button type="submit">Guardar Cambios</button>
+            <button type="button" onClick={() => setShowEditModal(false)}>Cancelar</button>
           </form>
-        </div>
+        </Modal>
       )}
 
       {zoomedImg && (
@@ -267,11 +320,11 @@ const VerCitas = ({ inSesion }) => {
         </div>
       )}
 
-      <button onClick={handleDownloadTxt} className="download-button">Presione aquí para descargar todas las citas</button>
+      <button onClick={handleDownloadCsv} className="download-button">Presione aquí para descargar todas las citas</button>
       <button onClick={handleDeleteAll} className="delete-all-button">Eliminar Todas las Citas</button>
-      <center style={{color:"darkRed"}}>Recuerde descargar todos los registros antes de eliminar los datos, pues esta acción es irreversible.</center>
-    </div>  
-);
+      <center style={{ color: "darkRed" }}>Recuerde descargar todos los registros antes de eliminar los datos, pues esta acción es irreversible.</center>
+    </div>
+  );
 };
 
 export default VerCitas;

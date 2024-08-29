@@ -1,50 +1,73 @@
 /* modal.css */
 .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.7);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-  }
-  
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  padding: 20px;
+  background-color: rgb(28, 97, 96);
+  border-radius: 5px;
+  position: relative;
+  text-align: center; /* Centra el contenido */
+  max-width: 25%; /* Añadido para permitir más flexibilidad en móviles */
+  width: 100%; /* Asegura que el modal no se extienda más allá de la pantalla */
+}
+
+/* Estilo para imágenes dentro del modal */
+.modal-content img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Estilo para el botón de cerrar modal */
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 64px;
+  cursor: pointer;
+  color: #000; /* Color del ícono de cerrar */
+}
+
+/* Estilo para el botón dentro del modal */
+.modal-close-button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 20px;
+}
+
+/* Ajustes específicos para dispositivos móviles */
+@media (max-width: 600px) {
   .modal-content {
-    padding: 20px;
-    background-color: rgb(28, 97, 96);
-    border-radius: 5px;
-    position: relative;
-    text-align: center; /* Centra el contenido */
+      padding: 15px;
+      max-width: 95vw; /* Ajusta el ancho máximo en móviles para más espacio */
+      width: auto; /* Ajusta el ancho para que el modal no se extienda más allá de la pantalla */
   }
-  
-  .modal-content img {
-    max-width: 100%;
-    height: auto;
-  }
-  
+
   .modal-close {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: none;
-    border: none;
-    font-size: 64px;
-    cursor: pointer;
-    color: #000; /* Color del ícono de cerrar */
+      font-size: 48px; /* Reduce el tamaño del ícono de cerrar en móviles */
+      top: 5px;
+      right: 5px;
   }
-  
+
   .modal-close-button {
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    margin-top: 20px;
+      padding: 8px 16px; /* Ajusta el tamaño del botón en móviles */
+      font-size: 14px;
   }
-  
-  
+}

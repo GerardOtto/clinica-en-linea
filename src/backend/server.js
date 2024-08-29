@@ -313,6 +313,50 @@ app.delete('/eliminarEspecialista/:id', (req, res) => {
   );
 });
 
+app.post('/verificar-login', (req, res) => {
+  const { rutPaciente, contrasena } = req.body;
+  const connection = mysql.createConnection(credentials);
+
+  // Consulta a la base de datos
+  connection.query(
+    'SELECT * FROM paciente WHERE rutPaciente = ?',
+    [rutPaciente],
+    (error, results) => {
+      if (error) {
+        console.error(error);
+        res.status(500).send('Error al consultar la base de datos');
+      } else {
+        if (results.length > 0) {
+          const hash = results[0].contrasena;
+
+          bcrypt.compare(contrasena, hash, (error, isMatch) => {
+            if (error) {
+              console.error(error);
+              res.status(500).send('Error al comparar contraseñas');
+            } else {
+              if (isMatch) {
+                // Verificación de admin
+                const isAdmin = (rutPaciente === '20969557k' && contrasena === '$20969557Kk');
+
+                res.status(200).json({ success: true, isAdmin });
+              } else {
+                res.status(200).json({ success: false });
+              }
+            }
+          });
+        } else {
+          res.status(200).json({ success: false });
+        }
+      }
+    }
+  );
+
+  connection.end(); // Asegúrate de cerrar la conexión
+});
+
+
+// Dentro de tu archivo de backend
+
 app.post('/verificar-login', bodyParser.json(), (req, res) => {
   const { rutPaciente, contrasena } = req.body;
   const connection = mysql.createConnection(credentials);
@@ -335,51 +379,79 @@ app.post('/verificar-login', bodyParser.json(), (req, res) => {
               res.status(500).send('Error al comparar contraseñas');
             } else {
               if (isMatch) {
-                // Las contraseñas coinciden, devolver el nombre del paciente
-                const rutPaciente = results[0].rutPaciente; // Asumiendo que el nombre está en la columna 'nombre'
-                res.status(200).json({ success: true, rutPaciente });
+                // Verificación de admin
+                const isAdmin = (rutPaciente === '20969557k' && contrasena === '$20969557Kk');
+
+                // Verificación de especialista
+                connection.query(
+                  'SELECT id FROM especialista WHERE rutEspecialista = ?',
+                  [rutPaciente],
+                  (error, especialistaResults) => {
+                    if (error) {
+                      console.error('Error al consultar la base de datos:', error);
+                      res.status(500).send('Error al consultar la base de datos');
+                    } else {
+                      const isEspecialista = especialistaResults.length > 0;
+                      const idEspecialista = isEspecialista ? especialistaResults[0].id : null;
+
+                      res.status(200).json({ 
+                        success: true, 
+                        rutPaciente, 
+                        isAdmin, 
+                        isEspecialista, 
+                        idEspecialista 
+                      });
+                    }
+                    connection.end();
+                  }
+                );
               } else {
-                // Las contraseñas no coinciden
                 res.status(200).json({ success: false });
               }
             }
           });
         } else {
-          // No se encontró un usuario con el email proporcionado
           res.status(200).json({ success: false });
         }
       }
     }
   );
-
-  // Mueve connection.end() a dentro de la callback para asegurar que se llama después de la consulta
-  connection.end();
 });
 
-app.post('/agendarCita', upload.single('imagen'), (req, res) => {
-  console.log('Valor de req.body:', req.body);
+
+app.post('/agendarCita', upload.single('imagen'), async (req, res) => {
   const connection = mysql.createConnection(credentials);
   const { rutPaciente, fecha, hora, descripcion, especialista_id, estado } = req.body;
-  const imagen = req.file ? path.join('uploads', req.file.filename) : null;  // Guardar la ruta de la imagen si se ha subido
+  const imagen = req.file ? path.join('uploads', req.file.filename) : null;
 
-  connection.query(
-    'INSERT INTO cita (rutPaciente, fecha, hora, descripcion, especialista_id, imagen, estado) VALUES (?, ?, ?, ?, ?, ?, ?)',
-    [rutPaciente, fecha, hora, descripcion, especialista_id, imagen, estado],
-    (error, results) => {
-      if (error) {
-        console.error(error);
-        res.status(500).send('Error al agendar la cita en la base de datos');
-      } else {
-        res.status(200).json({
-          status: 'success',
-          message: 'Cita agendada correctamente',
-          data: results,
-        });
-      }
+  try {
+    // Conectar a la base de datos
+    connection.connect();
+
+    // Obtener el nombre del paciente
+    const [pacienteRows] = await connection.promise().query('SELECT nombre FROM paciente WHERE rutPaciente = ?', [rutPaciente]);
+    if (pacienteRows.length === 0) {
+      return res.status(404).json({ message: 'Paciente no encontrado' });
     }
-  );
-  connection.end();
+    const nombrePaciente = pacienteRows[0].nombre;
+
+    // Insertar la nueva cita
+    const [result] = await connection.promise().query(
+      'INSERT INTO cita (rutPaciente, nombrePaciente, fecha, hora, descripcion, especialista_id, imagen, estado) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+      [rutPaciente, nombrePaciente, fecha, hora, descripcion, especialista_id, imagen, estado]
+    );
+
+    // Confirmar la inserción
+    res.status(201).json({ message: 'Cita agendada correctamente', citaId: result.insertId });
+  } catch (error) {
+    console.error('Error al agendar la cita:', error);
+    res.status(500).json({ message: 'Error al agendar la cita' });
+  } finally {
+    // Cerrar la conexión a la base de datos
+    connection.end();
+  }
 });
+
 
 app.delete('/cancelarCita/:id', (req, res) => {
   const { id } = req.params;

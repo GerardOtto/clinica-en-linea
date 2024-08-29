@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'; // Importa useNavigate
 import "../App.css";
 import './administrarEspecialistas.css';
 import './modal.css'; // Importa los estilos del modal
 import { Link } from 'react-router-dom';
 
-function ListarEspecialistas() {
+function ListarEspecialistas({ inSesion }) {
   const [especialistas, setEspecialistas] = useState([]);
   const [selectedEspecialista, setSelectedEspecialista] = useState(null);
   const [editData, setEditData] = useState({
@@ -17,10 +18,17 @@ function ListarEspecialistas() {
     especialidad: ''
   });
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const navigate = useNavigate(); // Hook para redirección
 
   useEffect(() => {
-    fetchEspecialistas();
-  }, []);
+    // Verifica el token
+    const token = localStorage.getItem('token-sesion') || inSesion;
+    if (token !== '20969557k') {
+      navigate('/'); // Redirige al usuario si el token no es válido
+    } else {
+      fetchEspecialistas();
+    }
+  }, [inSesion, navigate]);
 
   const fetchEspecialistas = async () => {
     try {

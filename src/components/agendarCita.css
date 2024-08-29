@@ -1,105 +1,99 @@
+/* agendarCita.css */
+
 .agendar-cita {
-    background-color: rgb(0, 58, 57);
-    padding: 20px;
-    margin: 0 auto;
-    width: 300px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    margin-top: 50px;
-    padding-right: 40px;
-  }
-  
-  .agendar-cita h2 {
-    text-align: center;
-    margin-bottom: 20px;
-    color: white;
-  }
-  
-  .form-group {
-    margin-bottom: 15px;
-  }
+  background-color: rgb(0, 58, 57);
+  padding: 20px;
+  margin: 0 auto;
+  width: 300px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  margin-top: 50px;
+  padding-right: 40px;
+}
 
-  .form-group textarea {
-    width: 100%;
-  }
-  
-  .form-group label {
-    display: block;
-    margin-bottom: 5px;
-    color: white;
-  }
-  
-  .form-group select,
-  .form-group input {
-    width: 100%;
-    padding: 8px;
-    box-sizing: border-box;
-  }
-  
-  .agendar-cita button {
-    width: 100%;
-    padding: 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    background-color: rgb(46, 121, 109);
-    color: white;
-    border: none;
-  }
-  
-  .agendar-cita button:hover {
-    background-color: rgb(34, 94, 85);
-  }
-  
-  .error-message {
-    color: red;
-    font-size: 12px;
-  }
-  
-  .mensaje-error {
-    color: red;
-    font-weight: bold;
-    margin-bottom: 10px;
-  }
+.agendar-cita h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: white;
+}
 
-  .agendar-cita-container {
-    display: flex;
-    justify-content: space-between;
-  }
+.form-group {
+  margin-bottom: 15px;
+}
 
-  .professional-card2 {
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    padding: 20px;
-    width: 300px;
-    text-align: center;
-    margin-top: 50px;
-    margin-left: -300px;
-    margin-right: 250px;
-  }
-  
-  .image-container {
-    height: 150px;
-    width: 150px;
-    margin: 0 auto 10px;
-    background-color: #f0f0f0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-    border-radius: 50%; /* Para hacer la imagen redonda */
-  }
-  
-  .profile-image {
-    height: 100%;
-    width: auto;
-  }
-  
-  .professional-info {
-    margin-top: 10px;
-    color: rgb(69, 130, 131);
-  }
-  
+.form-group textarea,
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+}
 
-  
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  color: white;
+}
+
+.agendar-cita button {
+  width: 100%;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: rgb(46, 121, 109);
+  color: white;
+  border: none;
+}
+
+.agendar-cita button:hover {
+  background-color: rgb(34, 94, 85);
+}
+
+.error-message {
+  color: red;
+  font-size: 12px;
+}
+
+.agendar-cita-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Estilo para la imagen del especialista y la especialidad */
+.especialista-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.image-container {
+  height: 100px;
+  width: 100px;
+  margin: 0 auto 10px;
+  background-color: #f0f0f0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  border-radius: 50%; /* Para hacer la imagen redonda */
+  margin-top: 10px;
+}
+
+.profile-image-small {
+  height: 100%;
+  width: auto;
+}
+
+.professional-info-small {
+  color: rgb(69, 130, 131);
+}
+
+@media (max-width: 600px) {
+  .especialista-info {
+    display: flex; /* Asegura que la información del especialista sea visible en móviles */
+  }
+}
