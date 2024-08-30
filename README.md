@@ -1,6 +1,6 @@
 # Proyecto de Gestión de Pacientes, Especialistas y Administradores
 
-Este proyecto implementa un **sitio web completo** con funciones integradas para la **gestión de Pacientes, Especialistas y Administradores**, apoyado por una base de datos robusta.
+Este proyecto implementa un **sitio web completo** y **aplicación movil** con funciones integradas para la **gestión de Pacientes, Especialistas y Administradores**, apoyado por una base de datos robusta.
 
 ## Funcionalidades Principales
 
