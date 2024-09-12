@@ -1,70 +1,26 @@
-# Getting Started with Create React App
+# Proyecto de Gestión de Pacientes, Especialistas y Administradores
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Este proyecto implementa un **sitio web completo** y **aplicación movil** con funciones integradas para la **gestión de Pacientes, Especialistas y Administradores**, apoyado por una base de datos robusta.
 
-## Available Scripts
+## Funcionalidades Principales
 
-In the project directory, you can run:
+### Gestión de Pacientes
+- Los pacientes pueden registrarse en el sitio web y **solicitar citas** con especialistas en diversas áreas.
+- Tienen la opción de **adjuntar una ficha médica** en formato de imagen, enviar mensajes personalizados a los especialistas y seleccionar horarios convenientes para sus citas.
 
-### `npm start`
+### Gestión de Especialistas
+- Los especialistas pueden **gestionar las citas** solicitadas, modificando su estado a:
+  - "Aprobada"
+  - "Rechazada"
+  - "Paciente no asiste a cita"
+  - "Cancelada por paciente"
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### Gestión de Administradores
+- El administrador tiene **control total** sobre la creación y gestión de especialistas en el sistema.
+- Puede administrar datos de identificación, contacto, especialidades, foto de perfil y descripciones personales de los especialistas.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Exportación de Datos
+- El sistema permite la **exportación de todas las citas** registradas en la base de datos, junto con sus detalles relevantes, en formato **Excel**.
 
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## Seguridad
+El sitio implementa **medidas de seguridad** efectivas para mantener la **privacidad** de los datos de los pacientes y asegurar que solo los **usuarios autorizados** puedan realizar acciones correspondientes a especialistas o administradores.
