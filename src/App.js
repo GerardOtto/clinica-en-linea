@@ -51,7 +51,6 @@ function App() {
         <Route path="/informaciones" element={<Informaciones />} />
         {/* estas son las rutas para comunicarte entre paginas */}
       </Routes>
-      <Footer />
     </Router>
   );
 }

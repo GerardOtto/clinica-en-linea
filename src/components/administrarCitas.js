@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import './administrarCitas.css';
 import Modal from './modal2'; // Importar el componente Modal
 
-
 const VerCitas = ({ inSesion }) => {
   const [citas, setCitas] = useState([]);
   const [especialistas, setEspecialistas] = useState([]);
@@ -38,6 +37,11 @@ const VerCitas = ({ inSesion }) => {
         throw new Error('Network response was not ok');
       }
       const data = await response.json();
+      // Ordenar las citas por estado con las terminadas al final
+      data.sort((a, b) => {
+        const estados = ['Pendiente', 'Aprobada', 'Rechazada', 'Anulada por paciente', 'Paciente no asiste', 'Aplazada', 'Terminada'];
+        return estados.indexOf(a.estado) - estados.indexOf(b.estado);
+      });
       setCitas(data);
     } catch (error) {
       console.error('Error al recuperar las citas:', error);
@@ -242,15 +246,13 @@ const VerCitas = ({ inSesion }) => {
               />
             </label>
 
-            <p style={{ color: "gainsboro", fontSize: "15px", marginTop: "-5px" }}>Fecha original: {editCita ? formatDate(editCita.fecha) : ''}</p>
             <label>Fecha:
               <input
                 type="date"
                 name="fecha"
                 value={formValues.fecha}
                 onChange={handleInputChange}
-                required
-                style={{ marginBottom: "25px" }}
+                style={{marginBottom:"25px"}}
               />
             </label>
 
@@ -264,7 +266,8 @@ const VerCitas = ({ inSesion }) => {
               />
             </label>
 
-            <label>Descripción:
+            <label>
+              <p>Descripción:</p>
               <textarea
                 placeholder="Ingrese datos y/o observaciones de la cita."
                 name="descripcion"
@@ -273,13 +276,13 @@ const VerCitas = ({ inSesion }) => {
               />
             </label>
 
-            <label style={{ paddingBottom: "20px" }}>Especialista:
+            <label style={{paddingBottom:"20px"}}>Especialista:
               <select
                 name="especialista_id"
                 value={formValues.especialista_id}
                 onChange={handleInputChange}
                 required
-                style={{ marginLeft: "8px", height: "auto" }}
+                style={{marginLeft:"8px",height:"auto"}}
               >
                 <option value="" disabled>Seleccione un especialista</option>
                 {especialistas.map((especialista) => (
@@ -296,7 +299,7 @@ const VerCitas = ({ inSesion }) => {
                 value={formValues.estado}
                 onChange={handleInputChange}
                 required
-                style={{ marginLeft: "8px", height: "auto" }}
+                style={{marginLeft:"8px", height:"auto"}}
               >
                 <option value="" disabled>Seleccione un estado</option>
                 <option value="Pendiente">Pendiente</option>
@@ -305,6 +308,7 @@ const VerCitas = ({ inSesion }) => {
                 <option value="Anulada por paciente">Anulada por paciente</option>
                 <option value="Paciente no asiste">Paciente no asiste</option>
                 <option value="Aplazada">Aplazada</option>
+                <option value="Terminada">Terminada</option>
               </select>
             </label>
 

@@ -428,17 +428,23 @@ app.post('/agendarCita', upload.single('imagen'), async (req, res) => {
     // Conectar a la base de datos
     connection.connect();
 
-    // Obtener el nombre del paciente
-    const [pacienteRows] = await connection.promise().query('SELECT nombre FROM paciente WHERE rutPaciente = ?', [rutPaciente]);
+    // Obtener el nombre y número de teléfono del paciente
+    const [pacienteRows] = await connection.promise().query(
+      'SELECT nombre, telefono FROM paciente WHERE rutPaciente = ?', 
+      [rutPaciente]
+    );
+    
     if (pacienteRows.length === 0) {
       return res.status(404).json({ message: 'Paciente no encontrado' });
     }
-    const nombrePaciente = pacienteRows[0].nombre;
 
-    // Insertar la nueva cita
+    const nombrePaciente = pacienteRows[0].nombre;
+    const numeroPaciente = pacienteRows[0].telefono;
+
+    // Insertar la nueva cita incluyendo el número de teléfono
     const [result] = await connection.promise().query(
-      'INSERT INTO cita (rutPaciente, nombrePaciente, fecha, hora, descripcion, especialista_id, imagen, estado) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-      [rutPaciente, nombrePaciente, fecha, hora, descripcion, especialista_id, imagen, estado]
+      'INSERT INTO cita (rutPaciente, nombrePaciente, numeroPaciente, fecha, hora, descripcion, especialista_id, imagen, estado) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      [rutPaciente, nombrePaciente, numeroPaciente, fecha, hora, descripcion, especialista_id, imagen, estado]
     );
 
     // Confirmar la inserción
@@ -451,6 +457,7 @@ app.post('/agendarCita', upload.single('imagen'), async (req, res) => {
     connection.end();
   }
 });
+
 
 
 app.delete('/cancelarCita/:id', (req, res) => {

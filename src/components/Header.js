@@ -72,55 +72,57 @@ const Header = ({ inSesion, isAdmin }) => {
 
   return (
     <header className="header">
-      <div className="logo">
-        <Link to="/">
-          <button className="logo-button">
-            <img src={Logo1} alt="Cafan Logo" style={{ width: '350px', height: '110px' }} />
-          </button>
-        </Link>
-      </div>
-      <div className="nav-right">
-        <ul className="nav-buttons">
-          <li>
-            <Link to="/registro">
-              <button>Crear cuenta</button>
-            </Link>
-          </li>
-          <li>
-            {inSesion ? (
-              <button onClick={handleLogout}>Cerrar sesión</button>
-            ) : (
-              <button onClick={handleOpenModal}>Iniciar sesión</button>
-            )}
-          </li>
-          <li>
-            {isAdmin && <Link to="/administrarEspecialistas"><button>Administrar especialistas</button></Link>}
-          </li>
-          <li>
-            {isAdmin && <Link to="/administrarCitas"><button>Administrar citas</button></Link>}
-          </li>
-        </ul>
-        <div className="search-container">
-          <input
-            type="text"
-            placeholder="Buscar especialista/especialidad"
-            className="search-input"
-            value={searchTerm}
-            onChange={handleSearchChange}
-          />
-          {searchResults.length > 0 && (
-            <ul className="search-dropdown">
-              {searchResults.map((result) => (
-                <li key={result.id} className="search-item">
-                  <Link to={`/perfilPro/${result.id}`}>
-                    {result.nombre} - {result.especialidad}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          )}
+      <div className='bloquesito'>
+        <div className="logo">
+          <Link to="/">
+            <button className="logo-button">
+              <img src={Logo1} alt="Cafan Logo" style={{ width: '350px', height: '80px' }} />
+            </button>
+          </Link>
+        </div>
+        <div className="nav-right">
+          <ul className="nav-buttons">
+            <li>
+              <Link to="/registro">
+                <button>Crear cuenta</button>
+              </Link>
+            </li>
+            <li>
+              {inSesion ? (
+                <button onClick={handleLogout}>Cerrar sesión</button>
+              ) : (
+                <button onClick={handleOpenModal}>Iniciar sesión</button>
+              )}
+            </li>
+            <li>
+              {isAdmin && <Link to="/administrarEspecialistas"><button>Administrar especialistas</button></Link>}
+            </li>
+            <li>
+              {isAdmin && <Link to="/administrarCitas"><button>Administrar citas</button></Link>}
+            </li>
+          </ul>
         </div>
       </div>
+      <div className="search-container">
+            <input
+              type="text"
+              placeholder="Buscar especialista/especialidad"
+              className="search-input"
+              value={searchTerm}
+              onChange={handleSearchChange}
+            />
+            {searchResults.length > 0 && (
+              <ul className="search-dropdown">
+                {searchResults.map((result) => (
+                  <li key={result.id} className="search-item">
+                    <Link to={`/perfilPro/${result.id}`}>
+                      {result.nombre} - {result.especialidad}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
       <nav className="nav-links">
         <Link to="/profesionales">Profesionales</Link>
         <Link to="/" onClick={handleClickAgendarCita}>Agendar cita</Link>

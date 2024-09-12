@@ -48,6 +48,10 @@
   margin-bottom: 5px;
 }
 
+.mis-citas li .cita-numero-paciente {
+  margin-bottom: 5px;
+}
+
 .mis-citas li .cita-especialista {
   font-style: italic;
   color: #555;
@@ -86,7 +90,7 @@
 }
 
 .formulario-modificacion-cita {
-  width: 100%;
+  width: 90%;
   padding: 20px;
   background-color: rgb(16, 58, 57);
   border-radius: 5px;

@@ -23,33 +23,35 @@ const Professionals = () => {
   };
 
   return (
-    <div className="professionals-container">
-      <main className="professionals-content">
-        {especialistas.map((especialista) => (
-          <div key={especialista.id} className="professional-card">
-            <div className="image-container">
-              {especialista.imagen ? (
-                <img
-                  src={`http://localhost:4000/${especialista.imagen}`}
-                  alt="Imagen del profesional"
-                  className="profile-image"
-                />
-              ) : (
-                'Imagen del profesional'
-              )}
+    <div className="columna-central">
+      <div className="professionals-container">
+        <main className="professionals-content">
+          {especialistas.map((especialista) => (
+            <div key={especialista.id} className="professional-card">
+              <div className="image-container">
+                {especialista.imagen ? (
+                  <img
+                    src={`http://localhost:4000/${especialista.imagen}`}
+                    alt="Imagen del profesional"
+                    className="profile-image"
+                  />
+                ) : (
+                  'Imagen del profesional'
+                )}
+              </div>
+              <div className="professional-info">
+                <h2>{especialista.nombre}</h2>
+                <p>Contacto: {especialista.contacto}</p>
+                <p>Especialidad: {especialista.especialidad}</p>
+                <p>Horario de Atención: {especialista.horarioAtencion}</p>
+                <Link to={`/perfilPro/${especialista.id}`}>
+                  <button className="schedule-button">Ver perfil</button>
+                </Link>
+              </div>
             </div>
-            <div className="professional-info">
-              <h2>{especialista.nombre}</h2>
-              <p>Contacto: {especialista.contacto}</p>
-              <p>Especialidad: {especialista.especialidad}</p>
-              <p>Horario de Atención: {especialista.horarioAtencion}</p>
-              <Link to={`/perfilPro/${especialista.id}`}>
-                <button className="schedule-button">Ver perfil</button>
-              </Link>
-            </div>
-          </div>
-        ))}
-      </main>
+          ))}
+        </main>
+      </div>
     </div>
   );
 };

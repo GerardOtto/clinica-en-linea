@@ -9,27 +9,44 @@ html, body {
 
 /* Asegúrate de que el contenedor del footer esté correctamente posicionado */
 .footer {
-  padding: 10px 20px;
-  margin-top: 50px;
   background-color: rgb(16, 58, 57);
   text-align: center;
   width: 100%; /* Asegura que el footer ocupe el 100% del ancho de la ventana */
   box-sizing: border-box; /* Incluye el padding en el ancho total */
-  position: relative; /* Por si necesitas posicionarlo más adelante */
 }
 
 /* Opción adicional para asegurar que el footer se adhiere al fondo */
 body {
+  padding-top: 250px;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color:  rgb(231, 238, 237);
+  background-color: rgb(231, 238, 237);
 }
 
+/* Estilo para el contenido principal */
 .content {
   flex: 1; /* Esta clase sería para el contenido principal de la página */
 }
 
-button{
+/* Estilo para los botones */
+button {
   font-size: large;
+}
+
+/* Estilo para pantallas grandes */
+@media (min-width: 768px) {
+  body {
+    width: 1110px;
+    margin: auto;
+  }
+}
+
+/* Estilo para pantallas pequeñas */
+@media (max-width: 767px) {
+  body {
+    padding-top: 0px;
+    width: 100%;
+    margin: 0;
+  }
 }

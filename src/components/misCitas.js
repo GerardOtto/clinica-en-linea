@@ -6,18 +6,19 @@ import './misCitas.css';
 const MisCitas = () => {
   const [citasComoPaciente, setCitasComoPaciente] = useState([]);
   const [citasComoEspecialista, setCitasComoEspecialista] = useState([]);
+  const [citasCompletadas, setCitasCompletadas] = useState([]); // Estado para las citas completadas
   const [especialistas, setEspecialistas] = useState([]);
   const [editCita, setEditCita] = useState(null);
   const [formValues, setFormValues] = useState({
     rutPaciente: '',
     nombrePaciente: '',
+    numeroPaciente: '',
     fecha: '',
     hora: '',
     descripcion: '',
     especialista_id: '',
     estado: '',
   });
-  const [fechaOriginal, setFechaOriginal] = useState(''); // Nuevo estado para la fecha original
   const [showEditModal, setShowEditModal] = useState(false);
   const [zoomedImage, setZoomedImage] = useState(null); // Estado para manejar el zoom de la imagen
   const [isEspecialista, setIsEspecialista] = useState(false); // Estado para manejar el token 'esEspecialista'
@@ -49,13 +50,13 @@ const MisCitas = () => {
   const fetchCitas = async () => {
     const tokenSesion = localStorage.getItem('token-sesion');
     const tokenEspecialista = localStorage.getItem('esEspecialista');
-
+  
     if (!tokenSesion) {
       console.error('Debe iniciar sesión primero');
       alert('Debe iniciar sesión primero');
       return redirect('/login');
     }
-
+  
     try {
       const response = await fetch('http://localhost:4000/misCitas', {
         method: 'GET',
@@ -63,41 +64,55 @@ const MisCitas = () => {
           'Content-Type': 'application/json',
         },
       });
-
+  
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
-
+  
       const data = await response.json();
-
+  
       const citasPaciente = data.filter((cita) => cita.rutPaciente === tokenSesion);
       const citasEspecialista = tokenEspecialista
         ? data.filter((cita) => cita.especialista_id.toString() === tokenEspecialista)
         : [];
-
+  
+      // Filtrar citas completadas que pertenecen al rutPaciente del token de sesión o al especialista
+      const citasTerminadas = data.filter((cita) =>
+        cita.estado === 'Terminada' &&
+        (cita.rutPaciente === tokenSesion || cita.especialista_id.toString() === tokenEspecialista)
+      );
+  
       setCitasComoPaciente(citasPaciente);
       setCitasComoEspecialista(citasEspecialista);
+      setCitasCompletadas(citasTerminadas); // Actualizar estado con citas completadas
     } catch (error) {
       console.error('Error al recuperar citas:', error);
     }
   };
+  
+  
 
-  const formatDate = (isoString) => {
+  const formatToDateInput = (isoString) => {
     const date = new Date(isoString);
-    const day = date.getDate();
-    const month = date.getMonth() + 1;
     const year = date.getFullYear();
-    return `El día ${day} del ${month} del ${year}`;
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Mes en formato de dos dígitos
+    const day = String(date.getDate()).padStart(2, '0'); // Día en formato de dos dígitos
+    return `${year}-${month}-${day}`;
   };
 
   const handleEditCita = (cita) => {
     setEditCita(cita);
     setFormValues({
       ...cita,
-      fecha: formatDate(cita.fecha),
+      fecha: formatToDateInput(cita.fecha), // Usar el nuevo formato de fecha
     });
-    setFechaOriginal(formatDate(cita.fecha)); // Guardar la fecha original
     setShowEditModal(true);
+  };
+
+  const formatToChileanDate = (isoString) => {
+    const date = new Date(isoString);
+    const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
+    return date.toLocaleDateString('es-CL', options);
   };
 
   const handleInputChange = (e) => {
@@ -169,11 +184,12 @@ const MisCitas = () => {
     <div className="mis-citas">
       <h2>Mis Citas</h2>
 
+      {/* Lista de citas como paciente */}
       {citasComoPaciente.length > 0 ? (
         <ul>
           {citasComoPaciente.map((cita) => (
             <li key={cita.id}>
-              <span className="cita-fecha">{formatDate(cita.fecha)} entre las {cita.hora} horas</span>
+              <span className="cita-fecha">{formatToDateInput(cita.fecha)} entre las {cita.hora} horas</span>
               <span className="cita-descripcion">Descripción: {cita.descripcion}</span>
               <span className="cita-especialista">Especialista: {especialistas.find(e => e.id === cita.especialista_id)?.nombre || 'Cargando...'}</span>
               {cita.imagen ? (
@@ -200,6 +216,7 @@ const MisCitas = () => {
         <p>No hay citas programadas como paciente.</p>
       )}
 
+      {/* Lista de citas como especialista */}
       {isEspecialista && (
         <>
           <h3>Citas como Especialista</h3>
@@ -207,8 +224,9 @@ const MisCitas = () => {
             <ul>
               {citasComoEspecialista.map((cita) => (
                 <li key={cita.id} className="especialista-cita">
-                  <span className="cita-fecha">{formatDate(cita.fecha)} entre las {cita.hora} horas</span>
+                  <span className="cita-fecha">{formatToChileanDate(cita.fecha)} entre las {cita.hora} horas</span>
                   <span className="cita-paciente" style={{marginBottom:"5px"}}>Nombre del paciente: {cita.nombrePaciente}</span>
+                  <span className="cita-numero-paciente">Teléfono del paciente: {cita.numeroPaciente}</span>
                   <span className="cita-descripcion">Descripción: {cita.descripcion}</span>
                   <span className="cita-especialista">Especialista: {especialistas.find(e => e.id === cita.especialista_id)?.nombre || 'Cargando...'}</span>
                   {cita.imagen ? (
@@ -223,7 +241,7 @@ const MisCitas = () => {
                       src={`http://localhost:4000/${cita.imagen}`}
                       alt="Imagen adjunta a la cita"
                       width="300"
-                      style={{ cursor: 'pointer' }}
+                      style={{ cursor: 'pointer', marginBottom:'10px' }}
                       onClick={() => handleZoom(cita.imagen)}
                     />
                   )}
@@ -237,6 +255,22 @@ const MisCitas = () => {
             <p>No hay citas programadas como especialista.</p>
           )}
         </>
+      )}
+
+      {/* Lista de citas completadas */}
+      <h3>Citas Completadas</h3>
+      {citasCompletadas.length > 0 ? (
+        <ul>
+          {citasCompletadas.map((cita) => (
+            <li key={cita.id} className="cita-completada">
+              <span className="cita-paciente">Nombre del paciente: {cita.nombrePaciente}</span>
+              <span className="cita-especialista">Especialista: {especialistas.find(e => e.id === cita.especialista_id)?.nombre || 'Cargando...'}</span>
+              <span className="cita-fecha">Fecha: {formatToChileanDate(cita.fecha)}</span>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p>No hay citas completadas.</p>
       )}
 
       {showEditModal && (
@@ -254,14 +288,12 @@ const MisCitas = () => {
               />
             </label>
 
-            <p style={{color:"gainsboro", fontSize:"15px", marginTop:"-5px"}}>Fecha original: {fechaOriginal}</p> {/* Mostrar la fecha original */}
             <label>Fecha:
               <input
                 type="date"
                 name="fecha"
                 value={formValues.fecha}
                 onChange={handleInputChange}
-                required
                 style={{marginBottom:"25px"}}
               />
             </label>
@@ -276,7 +308,8 @@ const MisCitas = () => {
               />
             </label>
 
-            <label>Descripción:
+            <label>
+              <p>Descripción:</p>
               <textarea
                 placeholder="Ingrese datos y/o observaciones de la cita."
                 name="descripcion"
@@ -317,6 +350,7 @@ const MisCitas = () => {
                 <option value="Anulada por paciente">Anulada por paciente</option>
                 <option value="Paciente no asiste">Paciente no asiste</option>
                 <option value="Aplazada">Aplazada</option>
+                <option value="Terminada">Terminada</option>
               </select>
             </label>
 
