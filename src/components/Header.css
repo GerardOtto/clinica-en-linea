@@ -1,8 +1,8 @@
 /* Estilos generales del header */
+
 .bloquesito {
   display: flex;
 }
-
 .header {
   display: flex;
   flex-direction: column;
@@ -10,16 +10,6 @@
   padding: 10px 20px;
   background-color: rgb(255, 255, 255);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  position: fixed; /* Posiciona el header en la parte superior de la página */
-  left: 0;
-  right: 0;
-  top: 0;
-  z-index: 1000; /* Asegura que el header esté por encima de otros contenidos */
-}
-
-.logo {
-  margin-right: auto; /* Empuja el logo a la izquierda */
 }
 
 .logo-button {
@@ -32,9 +22,11 @@
 
 .nav-right {
   display: flex;
-  flex-direction: row; /* Muestra los botones de navegación en una fila */
+  flex-direction: column;
   align-items: center;
-  margin-bottom: 10px; 
+  width: 100%;
+  margin-bottom: 10px;
+  margin: auto;
 }
 
 .nav-buttons {
@@ -65,9 +57,9 @@
 }
 
 .search-container {
-  width: 65%;
-  margin: auto;
-  margin-bottom: 10px;
+  width: 100%;
+  margin-top: 10px;
+  padding-bottom: 10px;
 }
 
 .search-input {
@@ -81,7 +73,7 @@
   position: center;
   top: auto;
   left: 0;
-  width: 96%;
+  width: auto;
   background-color: white;
   color: rgb(0, 0, 0);
   border: 1px solid #ccc;
@@ -111,10 +103,9 @@
   border-radius: 5px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   font-size: x-large;
+  width: 100%;
   overflow-x: auto;
   white-space: nowrap;
-  width: 80%;
-  margin: auto;
 }
 
 /* Estilos para enlaces en el nav-links */
@@ -134,15 +125,12 @@
 /* Estilos para dispositivos móviles */
 @media (max-width: 768px) {
   .bloquesito {
+    display: flex;
     flex-direction: column;
   }
-  
   .header {
     flex-direction: column;
     align-items: center;
-    position: relative;
-    padding: 0;
-    margin: 0;
   }
 
   .nav-right {
