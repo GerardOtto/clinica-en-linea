@@ -23,7 +23,7 @@ function ListarEspecialistas({ inSesion }) {
   useEffect(() => {
     // Verifica el token
     const token = localStorage.getItem('token-sesion') || inSesion;
-    if (token !== '20969557k') {
+    if (token !== '1369246k') {
       navigate('/'); // Redirige al usuario si el token no es válido
     } else {
       fetchEspecialistas();

@@ -31,6 +31,96 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+
+// Crear conexión a la base de datos
+const db = mysql.createConnection(credentials);
+
+db.connect(err => {
+  if (err) {
+    console.error('Error de conexión a la base de datos:', err);
+    return;
+  }
+  console.log('Conectado a la base de datos MySQL');
+});
+
+// Ruta para obtener el contenido principal
+app.get('/maincontent', (req, res) => {
+  db.query('SELECT * FROM main_content WHERE id = 1', (err, results) => {
+    if (err) {
+      console.error('Error al obtener el contenido:', err);
+      return res.status(500).send('Error al obtener el contenido');
+    }
+    res.json(results[0]);
+  });
+});
+
+// Ruta para actualizar el contenido principal
+app.put('/maincontent', (req, res) => {
+  const { leftSidebarText, imageSectionText, mainText, footerText, secondFooter } = req.body;
+  const sql = `UPDATE main_content SET 
+    leftSidebarText = ?, 
+    imageSectionText = ?, 
+    mainText = ?, 
+    footerText = ?, 
+    secondFooter = ? 
+    WHERE id = 1`;
+
+  db.query(sql, [leftSidebarText, imageSectionText, mainText, footerText, secondFooter], (err) => {
+    if (err) {
+      console.error('Error al actualizar el contenido:', err);
+      return res.status(500).send('Error al actualizar el contenido');
+    }
+    res.send('Contenido actualizado con éxito');
+  });
+});
+
+// Ruta para subir una nueva imagen
+app.post('/subirImagenMainContent', upload.single('imagen'), async (req, res) => {
+  const file = req.file;
+  const id = req.body.id;
+
+  if (!file) {
+    return res.status(400).send('No file uploaded.');
+  }
+
+  try {
+    // Obtén el path de la imagen anterior desde la base de datos
+    const [rows] = await db.promise().query('SELECT imageSectionText FROM main_content WHERE id = ?', [id]);
+
+    if (rows.length > 0) {
+      const oldImage = rows[0].imageSectionText;
+      
+      if (oldImage) {
+        // Elimina el archivo antiguo del sistema de archivos
+        const oldImagePath = path.join(__dirname, 'uploads', oldImage);
+        if (fs.existsSync(oldImagePath)) {
+          fs.unlinkSync(oldImagePath);
+        }
+      }
+    }
+
+    // Guarda el nuevo archivo
+    const newImagePath = file.filename;
+    await db.promise().query('UPDATE main_content SET imageSectionText = ? WHERE id = ?', [newImagePath, id]);
+
+    res.json({ path: newImagePath });
+  } catch (error) {
+    console.error('Error al subir la imagen:', error);
+    res.status(500).send('Error al subir la imagen.');
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
+
 // Nueva ruta para búsqueda
 app.get('/buscar', (req, res) => {
   const { termino } = req.query;
@@ -124,31 +214,49 @@ app.post('/crearUsuario', (req, res) => {
 
   const saltRounds = 15;
 
-  bcrypt.hash(contrasena, saltRounds, (error, hash) => {
-    if (error) {
-      console.error(error);
-      res.status(500).send("Error al hashear la contraseña");
-    } else {
-      connection.query(
-        'INSERT INTO paciente (id, nombre, rutPaciente, email, contrasena, telefono) VALUES (?, ?, ?, ?, ?, ?)',
-        [id, nombre, rutPaciente, email, hash, telefono],
-        (error, results) => {
+  // Primero, verificar si el rutPaciente ya existe
+  connection.query(
+    'SELECT * FROM paciente WHERE rutPaciente = ?',
+    [rutPaciente],
+    (err, results) => {
+      if (err) {
+        console.error('Error al consultar la base de datos:', err);
+        res.status(500).send('Error en la consulta a la base de datos');
+      } else if (results.length > 0) {
+        // Si se encuentra un resultado, significa que ya existe el rutPaciente
+        res.status(400).send('El RUT ya está registrado en el sistema');
+        connection.end(); // Cerrar la conexión
+      } else {
+        // Si no existe, proceder con la inserción
+        bcrypt.hash(contrasena, saltRounds, (error, hash) => {
           if (error) {
             console.error(error);
-            res.status(500).send('Error al insertar en la base de datos');
+            res.status(500).send("Error al hashear la contraseña");
           } else {
-            res.status(200).json({
-              status: 'success',
-              message: 'Datos insertados correctamente',
-              data: results,
-            });
+            connection.query(
+              'INSERT INTO paciente (id, nombre, rutPaciente, email, contrasena, telefono) VALUES (?, ?, ?, ?, ?, ?)',
+              [id, nombre, rutPaciente, email, hash, telefono],
+              (error, results) => {
+                if (error) {
+                  console.error(error);
+                  res.status(500).send('1sertar en la base de datos');
+                } else {
+                  res.status(200).json({
+                    status: 'success',
+                    message: 'Datos insertados correctamente',
+                    data: results,
+                  });
+                }
+                connection.end(); // Cerrar la conexión aquí
+              }
+            );
           }
-          connection.end(); // Mover connection.end() aquí
-        }
-      );
+        });
+      }
     }
-  });
+  );
 });
+
 
 
 app.post('/crearEspecialista', (req, res) => {
@@ -313,47 +421,6 @@ app.delete('/eliminarEspecialista/:id', (req, res) => {
   );
 });
 
-app.post('/verificar-login', (req, res) => {
-  const { rutPaciente, contrasena } = req.body;
-  const connection = mysql.createConnection(credentials);
-
-  // Consulta a la base de datos
-  connection.query(
-    'SELECT * FROM paciente WHERE rutPaciente = ?',
-    [rutPaciente],
-    (error, results) => {
-      if (error) {
-        console.error(error);
-        res.status(500).send('Error al consultar la base de datos');
-      } else {
-        if (results.length > 0) {
-          const hash = results[0].contrasena;
-
-          bcrypt.compare(contrasena, hash, (error, isMatch) => {
-            if (error) {
-              console.error(error);
-              res.status(500).send('Error al comparar contraseñas');
-            } else {
-              if (isMatch) {
-                // Verificación de admin
-                const isAdmin = (rutPaciente === '20969557k' && contrasena === '$20969557Kk');
-
-                res.status(200).json({ success: true, isAdmin });
-              } else {
-                res.status(200).json({ success: false });
-              }
-            }
-          });
-        } else {
-          res.status(200).json({ success: false });
-        }
-      }
-    }
-  );
-
-  connection.end(); // Asegúrate de cerrar la conexión
-});
-
 
 // Dentro de tu archivo de backend
 
@@ -380,7 +447,7 @@ app.post('/verificar-login', bodyParser.json(), (req, res) => {
             } else {
               if (isMatch) {
                 // Verificación de admin
-                const isAdmin = (rutPaciente === '20969557k' && contrasena === '$20969557Kk');
+                const isAdmin = (rutPaciente === '1369246k' && contrasena === '$Admincafan1');
 
                 // Verificación de especialista
                 connection.query(
@@ -614,6 +681,99 @@ app.delete('/eliminarTodasCitas', (req, res) => {
             res.status(200).json({
               status: 'success',
               message: 'Todas las citas eliminadas correctamente',
+            });
+          }
+          connection.end();
+        }
+      );
+    }
+  );
+});
+
+// Obtener la información actual
+app.get('/informacion', (req, res) => {
+  const connection = mysql.createConnection(credentials);
+  
+  connection.query('SELECT * FROM informaciones', (error, results) => {
+    if (error) {
+      console.error('Error al consultar la base de datos:', error);
+      res.status(500).send('Error al consultar la base de datos');
+    } else {
+      if (results.length > 0) {
+        res.status(200).json(results[0]);
+      } else {
+        res.status(404).send('No se encontró información');
+      }
+    }
+    connection.end();
+  });
+});
+
+// Actualizar la información
+app.put('/informacion', (req, res) => {
+  const { textoPrincipal, textoInferior, imagen } = req.body;
+  
+  const connection = mysql.createConnection(credentials);
+  
+  connection.query(
+    'UPDATE informaciones SET textoPrincipal = ?, textoInferior = ?, imagen = ? WHERE id = 1',
+    [textoPrincipal, textoInferior, imagen],
+    (error, results) => {
+      if (error) {
+        console.error('Error al actualizar la información:', error);
+        res.status(500).send('Error al actualizar la información');
+      } else {
+        res.status(200).json({
+          status: 'success',
+          message: 'Información actualizada correctamente',
+        });
+      }
+      connection.end();
+    }
+  );
+});
+
+// Ruta para subir una nueva imagen
+app.post('/subirImagenInformacion', upload.single('imagen'), (req, res) => {
+  const { id } = req.body; // Obtener el ID desde el cuerpo de la solicitud
+  const imagePath = path.join('uploads', req.file.filename);  // Guardar la ruta relativa de la imagen
+
+  const connection = mysql.createConnection(credentials);
+  
+  // Primero obtener la imagen actual de la información
+  connection.query(
+    'SELECT imagen FROM informaciones WHERE id = ?',
+    [id],
+    (error, results) => {
+      if (error) {
+        console.error('Error al obtener la imagen actual:', error);
+        res.status(500).send('Error al obtener la imagen actual');
+        connection.end();
+        return;
+      }
+
+      const oldImagePath = results[0]?.imagen;
+      
+      // Luego actualizar la imagen
+      connection.query(
+        'UPDATE informaciones SET imagen = ? WHERE id = ?',
+        [imagePath, id],
+        (error, results) => {
+          if (error) {
+            console.error('Error al actualizar la imagen:', error);
+            res.status(500).send('Error al actualizar la imagen');
+          } else {
+            if (oldImagePath) {
+              // Eliminar la imagen anterior del servidor
+              const oldImageFullPath = path.join(__dirname, oldImagePath.replace(/^uploads\//, '')); // Corrige la ruta
+              fs.unlink(oldImageFullPath, (err) => {
+                if (err) console.error('Error al eliminar la imagen anterior:', err);
+              });
+            }
+            res.status(200).json({
+              status: 'success',
+              message: 'Imagen actualizada correctamente',
+              path: imagePath
             });
           }
           connection.end();

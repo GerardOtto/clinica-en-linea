@@ -22,8 +22,8 @@ const VerCitas = ({ inSesion }) => {
   useEffect(() => {
     const token = localStorage.getItem('token-sesion') || inSesion;
 
-    if (token !== '20969557k') {
-      navigate('/'); // Redirigir al usuario si el token de inSesion es distinto a '20969557k'
+    if (token !== '1369246k') {
+      navigate('/'); // Redirigir al usuario si el token de inSesion es distinto al de admin
     } else {
       fetchCitas();
       fetchEspecialistas();
@@ -273,6 +273,7 @@ const VerCitas = ({ inSesion }) => {
                 name="descripcion"
                 value={formValues.descripcion}
                 onChange={handleInputChange}
+                style={{ width:"70%"}}
               />
             </label>
 

@@ -72,7 +72,7 @@ class FormularioRegistro extends Component {
         try {
           data = JSON.parse(text);
         } catch (error) {
-          throw new Error('Respuesta no es un JSON válido: ' + text);
+          throw new Error('Respuesta no es válida: ' + text);
         }
 
         if (!response.ok) {

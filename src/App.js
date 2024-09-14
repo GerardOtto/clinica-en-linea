@@ -38,7 +38,7 @@ function App() {
     <Router>
       <Header inSesion={inSesion} isAdmin={isAdmin} />
       <Routes>
-        <Route path="/" element={<MainContent />} />
+        <Route path="/" element={<MainContent isAdmin={isAdmin}/>} />
         <Route path="/login" element={<Login />} />
         <Route path="/registro" element={<Registro />} />
         <Route path="/perfilPro/:id" element={<Perfil />} />
@@ -48,7 +48,7 @@ function App() {
         <Route path="/administrarEspecialistas" element={<AdministrarEspecialistas />} />
         <Route path="/misCitas" element={<MisCitas />} />
         <Route path="/administrarCitas" element={isAdmin ? <AdministrarCitas isAdmin={isAdmin} /> : <Navigate to="/" />} />
-        <Route path="/informaciones" element={<Informaciones />} />
+        <Route path="/informaciones" element={<Informaciones isAdmin={isAdmin}/>} />
         {/* estas son las rutas para comunicarte entre paginas */}
       </Routes>
     </Router>

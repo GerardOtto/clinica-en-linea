@@ -1,59 +1,106 @@
+/* Informaciones.css */
+
 .quienes-somos {
-    padding: 20px;
-    font-family: Arial, sans-serif;
-  }
-  
-  .contenido {
-    margin-top: 20px;
-  }
-  
-  .informacion h2 {
-    font-size: 22px;
-    margin-bottom: 20px;
-    color: black;
-  }
-  
-  .info-contenido {
-    display: flex;
-    gap: 20px;
-    color: black;
-  }
-  
-  .texto, .imagen {
-    flex: 1;
-    padding: 10px;
-    border: 1px solid #ddd;
-    background-color: #f9f9f9;
-  }
-  
-  .texto h3 {
-    font-size: 18px;
-  }
-  
-  .texto p {
-    margin-top: 10px;
-  }
-  
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+.quienes-somos h1{
+  padding: 20px;
+  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+  color: black;
+}
+
+.contenido {
+  margin-top: 20px;
+}
+
+.informacion h2 {
+  font-size: 22px;
+  margin-bottom: 20px;
+  color: black;
+}
+
+.info-contenido {
+  display: flex;
+  gap: 20px;
+  color: black;
+}
+
+.imagen {
+  padding: 10px;
+  margin: auto;
+  border: 1px solid #ddd;
+  background-color: #f9f9f9;
+  color: black;
+  min-width: 600px;
+}
+
+.texto1 {
+  padding: 10px;
+  border: 1px solid #000000;
+  background-color: #f9f9f9;
+  color: black;
+  width: auto;
+  height: auto;
+  margin: auto;
+}
+
+.texto2{
+  padding: 10px;
+  border: 1px solid #000000;
+  background-color: #f9f9f9;
+  color: black;
+  width: auto;
+  height: auto;
+  margin-top: 30px;
+}
+
+.texto h3 {
+  font-size: 18px;
+}
+
+.texto p {
+  margin-top: 10px;
+  color: black;
+}
+
+.imagen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 5px; /* Añade un poco de espacio alrededor de la imagen */
+  border: 1px solid #ddd; /* Ajusta el color del borde */
+  background-color: #f9f9f9; /* Ajusta el color de fondo */
+  border-radius: 8px; /* Añade bordes redondeados */
+}
+
+.imagen img {
+  display: block;
+  max-width: 100%;
+  max-height: 300px; /* Ajusta este valor según tus necesidades */
+  object-fit: cover; /* Asegura que la imagen mantenga su proporción */
+  border-radius: 4px; /* Añade bordes redondeados a la imagen */
+}
+
+.contacto {
+  margin-top: 30px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  background-color: #f9f9f9;
+  color: black;
+}
+
+.contacto h3 {
+  margin: 10px 0;
+}
+
+.contacto p {
+  margin: 5px 0;
+}
+
+@media (max-width: 768px) {
   .imagen {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
+    min-width: 200px;
   }
-  
-  .contacto {
-    margin-top: 30px;
-    padding: 10px;
-    border: 1px solid #ddd;
-    background-color: #f9f9f9;
-    color: black;
-  }
-  
-  .contacto h3 {
-    margin: 10px 0;
-  }
-  
-  .contacto p {
-    margin: 5px 0;
-  }
-  
+}

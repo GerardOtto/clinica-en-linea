@@ -27,6 +27,13 @@
   justify-content: center;
   margin-bottom: 20px;
 }
+.image-section img{
+  max-height: 290px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+}
 
 .text-section {
   background-color: rgb(36, 160, 136);
@@ -67,7 +74,8 @@
 
   .image-section {
     height: auto; /* Ajusta la altura para pantallas pequeñas */
-    margin-bottom: 10px;
+    margin: auto;
+    width: auto;
   }
 
   .text-section {
@@ -89,6 +97,14 @@
 
   .image-section {
     height: auto; /* Asegúrate de que la imagen se ajuste en pantallas muy pequeñas */
+    margin: auto;
+    max-width: auto;
+  }
+
+  .image-section img{
+    height: auto; /* Asegúrate de que la imagen se ajuste en pantallas muy pequeñas */
+    margin: auto;
+    max-width: 100%;
   }
 
   .text-section {

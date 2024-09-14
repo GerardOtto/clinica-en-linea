@@ -76,7 +76,7 @@ const Header = ({ inSesion, isAdmin }) => {
         <div className="logo">
           <Link to="/">
             <button className="logo-button">
-              <img src={Logo1} alt="Cafan Logo" style={{ width: '350px', height: '80px' }} />
+              <img src={Logo1} alt="Cafan Logo" style={{ width: '350px', height: '8D0px' }} />
             </button>
           </Link>
         </div>
@@ -129,7 +129,7 @@ const Header = ({ inSesion, isAdmin }) => {
         <Link to="/informaciones">Informaciones</Link>
         <Link to="/" onClick={handleClickMisReservas}>Mis reservas</Link>
         <Link to="https://wa.me/975348882?text=Hola! Me gustaría solicitar información sobre el centro Cafan!">Chat directo</Link>
-      </nav>
+      </nav> 
       <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
         <Formulario onClose={handleCloseModal} />
       </Modal>
